@@ -1,0 +1,4 @@
+.stack-work/
+haskellbook-exercises.cabal
+*~
+.DS_Store
