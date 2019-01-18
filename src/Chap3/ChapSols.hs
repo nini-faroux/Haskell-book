@@ -1,4 +1,4 @@
-module Chap3.SolsOne where
+module Chap3.ChapSols where
 
 -- Chapter exercises 
 -- 2

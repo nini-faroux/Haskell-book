@@ -1,4 +1,4 @@
-module Chap4.SolsOne where
+module Chap4.ChapSols where
 
 -- mood swing 
 data Mood = Blah | Woot deriving Show

@@ -1,4 +1,4 @@
-module Chap2.SolsOne where
+module Chap2.ChapSols where
 
 piSquare :: Double -> Double
 piSquare x = 3.14 * (x * x)
