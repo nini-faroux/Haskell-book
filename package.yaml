@@ -33,7 +33,6 @@ executables:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
-    - -Wall -fwarn-tabs
     dependencies:
     - haskellbook-exercises
 
