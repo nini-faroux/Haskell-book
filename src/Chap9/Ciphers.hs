@@ -5,9 +5,6 @@ import Data.Char (chr, ord)
 data Direction = Back | Forward deriving (Show, Eq)
 type Steps = Int 
 
-alphabet :: [(Char, Int)]
-alphabet = zipWith (,) ['a'..'z'] (map ord ['a'..'z'])
-
 caesar :: Steps -> Direction -> String -> String 
 caesar step dir xs = go step dir xs [] 
   where 
