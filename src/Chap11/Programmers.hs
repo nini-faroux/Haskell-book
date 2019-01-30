@@ -33,6 +33,6 @@ allLanguages = [Haskell, Agda, Idris, PureScript]
 allProgrammers :: [Programmer]
 allProgrammers = go allOperatingSystems allLanguages [] 
   where
-    go [] _ acc = acc
-    go os [] acc = go (drop 1 os) allLanguages acc
+    go [] _ acc              = acc
+    go os [] acc             = go (drop 1 os) allLanguages acc
     go oss@(o:os) (l:ls) acc = go oss ls (Programmer o l : acc)

@@ -5,6 +5,11 @@ data BinaryTree a =
   | Node (BinaryTree a) a (BinaryTree a) 
   deriving (Eq, Show, Ord)
 
+-- 3, fold for trees 
+foldTree :: (b -> a -> b) -> b -> BinaryTree a -> b
+foldTree _ z Leaf = z
+foldTree f z (Node left x right) = foldTree f ((foldTree f z left) `f` x) right
+
 -- 1
 mapTree :: (a -> b) -> BinaryTree a -> BinaryTree b
 mapTree _ Leaf = Leaf 
@@ -22,11 +27,6 @@ inorder (Node left x right) = inorder left ++ [x] ++ inorder right
 postorder :: BinaryTree a -> [a] 
 postorder Leaf = []
 postorder (Node left x right) = postorder left ++ postorder right ++ [x]
-
--- 3, fold for trees 
-foldTree :: (b -> a -> b) -> b -> BinaryTree a -> b
-foldTree _ z Leaf = z
-foldTree f z (Node left x right) = foldTree f ((foldTree f z left) `f` x) right
 
 -- given
 insert' :: Ord a => a -> BinaryTree a -> BinaryTree a

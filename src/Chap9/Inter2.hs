@@ -29,16 +29,3 @@ calc' = length mulsOfThree
 -- 3
 myFilter :: String -> [String]
 myFilter xs = filter (\x -> x /= "a" && x /= "an") $ myWords xs
-
--- List comprehensions
-mySqr = [x ^ 2 | x <- [1..5]]
-myCube = [x ^ 3 | x <- [1..5]]
-
--- 1
-tups = [(x, y) | x <- mySqr, y <- myCube]
-
--- 2
-tups' = [(x, y) | x <- mySqr, y <- myCube, x < 50, y < 50]
-
--- 3
-calc = length $ tups

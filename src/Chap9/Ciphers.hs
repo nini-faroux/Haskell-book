@@ -8,7 +8,7 @@ type Steps = Int
 caesar :: Steps -> Direction -> String -> String 
 caesar step dir xs = go step dir xs [] 
   where 
-    go step dir [] acc = reverse acc
+    go step dir [] acc     = reverse acc
     go step dir (x:xs) acc = go step dir xs ((conv step dir x) : acc) 
 
 conv :: Steps -> Direction -> Char -> Char 

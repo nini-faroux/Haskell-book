@@ -11,14 +11,10 @@ isSubseqOf (x:xs) ys
   | otherwise             = isSubseqOf xs ys
 
 -- 2
--- Split a sentence into words, then tuple each word with the capitalized form of each
 -- capitalizeWords "hello world"
 -- [("hello", "Hello"), ("world", "World")]
-
 capitalizeWords :: String -> [(String, String)]
 capitalizeWords xs = zipWith (,) (capWord <$> wordss xs) (wordss xs)
-    where
-      capWord s = (toUpper' $ head s) : (tail s)
 
 wordss :: String -> [String]
 wordss [] = []
@@ -31,5 +27,16 @@ toUpper' c
 
 -- Language exercises 
 -- 1
-capitalizeWord :: String -> String
-capitalizeWord s = [toUpper' $ head s] ++ tail s
+capWord :: String -> String
+capWord s = [toUpper' $ head s] ++ tail s
+
+-- 2
+capPar :: String -> String 
+capPar [] = [] 
+capPar xs = go (capWord xs) ' ' []
+  where
+    go [] prev acc = reverse acc
+    go (x:xs) prev acc 
+      | prev == '.' && x /= ' ' = go xs x ((toUpper' x) : acc)
+      | prev == '.' && x == ' ' = go xs prev (x : acc)
+      | otherwise = go xs x (x : acc)

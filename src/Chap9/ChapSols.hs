@@ -71,23 +71,19 @@ squish' = squishMap id
 
 -- 8
 myMaximumBy :: (a -> a -> Ordering) -> [a] -> Maybe a
-myMaximumBy _ [] = Nothing
-myMaximumBy f xs = go f xs (head xs)
-  where 
-    go _ [] acc = Just acc 
-    go f (x:xs) acc 
-      | f x acc == GT = go f xs x
-      | otherwise = go f xs acc
+myMaximumBy _ []  = Nothing
+myMaximumBy _ [x] = Just x
+myMaximumBy f (x:y:xs)
+  | f x y == GT = Just x
+  | otherwise   = myMaximumBy f (y:xs)
 
 -- 9 
 myMinimumBy :: (a -> a -> Ordering) -> [a] -> Maybe a 
-myMinimumBy _ [] = Nothing 
-myMinimumBy f xs = go f xs (head xs) 
-  where 
-    go _ [] acc = Just acc 
-    go f (x:xs) acc 
-      | f x acc == LT = go f xs x 
-      | otherwise = go f xs acc
+myMinimumBy _ []  = Nothing 
+myMinimumBy _ [x] = Just x
+myMinimumBy f (x:y:xs) 
+  | f x y == LT = Just x
+  | otherwise   = myMinimumBy f (y:xs)
 
 -- 10
 myMax :: Ord a => [a] -> Maybe a

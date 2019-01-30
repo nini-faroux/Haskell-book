@@ -8,10 +8,10 @@ instance Eq TisAnInteger where
 
 -- 2
 data TwoIntegers = 
-        Two Integer Integer 
+        Two' Integer Integer 
 
 instance Eq TwoIntegers where
-  (Two a b) == (Two c d) = a == c && b == d
+  (Two' a b) == (Two' c d) = a == c && b == d
 
 -- 3 
 data StringOrInt = 

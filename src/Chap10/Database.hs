@@ -21,11 +21,22 @@ theDatabase =
 filterDate :: [DatabaseItem] -> [UTCTime]
 filterDate db = getDate <$> filter isDate db
 
+filterDate' :: [DatabaseItem] -> [UTCTime] 
+filterDate' db = foldr (\a b -> if isDate a then [getDate a] ++ b else b) [] db
+
 -- 2
 filterNums :: [DatabaseItem] -> [Integer]
 filterNums db = getNum <$> filter isNum db
 
+filterNums' :: [DatabaseItem] -> [Integer]
+filterNums' db = foldr (\x y -> if isNum x then [getNum x] ++ y else y) [] db
+
 -- 3
+mostRecent' :: [DatabaseItem] -> UTCTime 
+mostRecent' db = foldr (\a b -> if isDate a then (if getDate a > b then getDate a else b) else b) defaultTime db
+
+defaultTime = (UTCTime (fromGregorian 1600 1 1) (secondsToDiffTime 34123))
+
 mostRecent :: [DatabaseItem] -> Maybe UTCTime
 mostRecent [] = Nothing
 mostRecent db = go (filterDate db) (head $ filterDate db)
@@ -38,6 +49,9 @@ mostRecent db = go (filterDate db) (head $ filterDate db)
 -- 4
 sumDb :: [DatabaseItem] -> Integer
 sumDb = sum . filterNums
+
+sumDb' :: [DatabaseItem] -> Integer
+sumDb' db = foldr (\a b -> if isNum a then (+) (getNum a) b else b) 0 db
 
 -- 5
 avgDb :: [DatabaseItem] -> Double
