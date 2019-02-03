@@ -312,4 +312,3 @@ monoidLeftId a = (a <> mempty) == a
 
 monoidRightId :: (Eq m, Monoid m) => m -> Bool
 monoidRightId a = (mempty <> a) == a
-
