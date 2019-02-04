@@ -41,3 +41,13 @@ y4 = lookup 2 $ zip xs4 ys4
 
 summed :: Maybe Integer
 summed = fmap sum $ (,) <$> x4 <*> y4
+
+-- Fixer upper 
+-- 1
+cu1 :: Maybe String
+cu1 = const <$> Just "Hello" <*> pure "World" 
+
+-- 2
+cu2 :: Maybe (Integer, Integer, String, [Integer])
+cu2 = (,,,) <$> Just 90 <*> Just 10 <*> Just "Tierness" <*> pure [1, 2, 3]
+
