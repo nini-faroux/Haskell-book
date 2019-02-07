@@ -24,6 +24,7 @@ dependencies:
 - time
 - QuickCheck
 - hspec
+- checkers
 
 library:
   source-dirs: src
