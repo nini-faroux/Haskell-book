@@ -76,6 +76,10 @@ type CombAssoc = Combine String String -> Combine String String -> Combine Strin
 -- 5 
 newtype BoolDisj = BoolDisj Bool deriving (Eq, Show)
 
+instance Monoid BoolDisj where
+  mempty = BoolDisj False
+  mappend = (<>)
+
 instance Semigroup BoolDisj where
   (BoolDisj True) <> _ = BoolDisj True 
   _ <> (BoolDisj True) = BoolDisj True 
@@ -88,9 +92,13 @@ disjGen :: Gen BoolDisj
 disjGen = frequency [(1, return $ BoolDisj False), (3, return $ BoolDisj True)]
 
 type BdisjAssoc = BoolDisj -> BoolDisj -> BoolDisj -> Bool 
+type DisjId = BoolDisj -> Bool
 
 disjTest :: IO () 
-disjTest = quickCheck (semigroupAssoc :: BdisjAssoc) 
+disjTest = do 
+    quickCheck (semigroupAssoc :: BdisjAssoc) 
+    quickCheck (monoidLeftId :: DisjId)
+    quickCheck (monoidRightId :: DisjId)
 
 -- 4
 newtype BoolConj = BoolConj Bool deriving (Eq, Show)

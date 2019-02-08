@@ -2,20 +2,20 @@ module Chap16.EitherFunc where
 
 import Test.QuickCheck
 
-data Sum a b =
+data Sum' a b =
     First a 
   | Second b
   deriving (Eq, Show)
 
-instance Functor (Sum a) where
+instance Functor (Sum' a) where
   fmap f (First a) = First a
   fmap f (Second b) = Second $ f b
 
 instance (Arbitrary a, Arbitrary b) => 
-        Arbitrary (Sum a b) where
+        Arbitrary (Sum' a b) where
   arbitrary = sumGen 
 
-sumGen :: (Arbitrary a, Arbitrary b) => Gen (Sum a b) 
+sumGen :: (Arbitrary a, Arbitrary b) => Gen (Sum' a b) 
 sumGen = do
     a <- arbitrary 
     b <- arbitrary 
@@ -29,7 +29,7 @@ functorCompose f g x = (fmap g (fmap f x)) == (fmap (g . f) x)
 
 sumTest :: IO () 
 sumTest = do
-   quickCheck (functorIdentity :: Sum String Double -> Bool) 
+   quickCheck (functorIdentity :: Sum' String Double -> Bool) 
    let c = functorCompose (+1) (*2)
-   let fc x = c (x :: Sum String Int)
+   let fc x = c (x :: Sum' String Int)
    quickCheck fc
