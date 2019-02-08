@@ -1,10 +1,10 @@
 module Chap10.ChapSols where 
 
 -- 1
-stops = "pbtdkg"
-vowels = "aeiou"
+stops10 = "pbtdkg"
+vowels10 = "aeiou"
 
-combs :: [Char] -> [Char] -> [(Char, Char, Char)]
+combs :: String -> String -> [(Char, Char, Char)]
 combs stops vowels = go stops vowels stops []
   where
     go _ [] _ acc       = reverse acc
@@ -13,7 +13,7 @@ combs stops vowels = go stops vowels stops []
     go xs vs (y:ys) acc = go xs vs ys ((head xs, head vs, y) : acc)
 
 -- 2
-combOneChar :: Char -> [Char] -> [Char] -> [(Char, Char, Char)]
+combOneChar :: Char -> String -> String -> [(Char, Char, Char)]
 combOneChar c stops vowels = go c vowels stops []
   where
     go _ [] _ acc      = reverse acc 
@@ -21,7 +21,6 @@ combOneChar c stops vowels = go c vowels stops []
     go p vs (y:ys) acc = go p vs ys ((p, head vs, y) : acc)
 
 -- rewrite functions using folds
-
 foldl' :: (b -> a -> b) -> b -> [a] -> b
 foldl' _ z [] = z
 foldl' f z (x:xs) = foldl' f (f z x) xs
@@ -34,17 +33,17 @@ and' :: [Bool] -> Bool
 and' = foldr (&&) True
 
 and'' :: [Bool] -> Bool
-and'' = foldr (\a b -> if a == False then False else b) True
+and'' = foldr (\a b -> not (a == False) && b) True
 
 -- 1
 or' :: [Bool] -> Bool
 or' [] = False 
 or' (x:xs)
-  | x == True = True 
+  | x = True 
   | otherwise = or' xs
 
 or2 :: [Bool] -> Bool
-or2 = foldr (\a b -> if a == True then True else b) False
+or2 = foldr (\a b -> if a then True else b) False
 
 orr :: Bool -> Bool -> Bool
 orr x y
@@ -83,12 +82,15 @@ rev' [] = []
 rev' xs = last xs : rev' (init xs)
 
 rev2 :: [a] -> [a] 
-rev2 xs = foldr (\a b -> b ++ [a]) [] xs
+rev2 = foldr (\a b -> b ++ [a]) [] 
+
+rev3 :: [a] -> [a] 
+rev3 = foldr (\a b -> b ++ [a]) []
 
 -- 5 
 mapp :: (a -> b) -> [a] -> [b]
 mapp _ [] = [] 
-mapp f (x:xs) = (f x) : mapp f xs
+mapp f (x:xs) = f x : mapp f xs
 
 map2 :: (a -> b) -> [a] -> [b]
 map2 f xs = foldr (\a b -> f a : b) [] xs
@@ -97,11 +99,14 @@ map2 f xs = foldr (\a b -> f a : b) [] xs
 filt :: (a -> Bool) -> [a] -> [a] 
 filt _ [] = [] 
 filt f (x:xs) 
-  | f x       = x : (filt f xs)
+  | f x       = x : filt f xs
   | otherwise = filt f xs
 
 filt2 :: (a -> Bool) -> [a] -> [a] 
-filt2 f xs = foldr (\x y -> if (f x) then x : y else y) [] xs
+filt2 f xs = foldr (\x y -> if f x then x : y else y) [] xs
+
+filt3 :: (a -> Bool) -> [a] -> [a] 
+filt3 f = foldr (\x y -> if f x then x : y else y) []
 
 -- 7 
 squish1 :: [[a]] -> [a] 
@@ -111,9 +116,15 @@ squish1 (x:xs) = x ++ squish1 xs
 squish2 :: [[a]] -> [a] 
 squish2 xxs = foldr (\a b -> a ++ b) [] xxs
 
+squish3 :: [[a]] -> [a] 
+squish3 = foldr (++) [] 
+
 -- 8
 squishMap1 :: (a -> [b]) -> [a] -> [b]
-squishMap1 f xs = foldr (\x y -> (f x) ++ y) [] xs
+squishMap1 f xs = foldr (\x y -> f x ++ y) [] xs
+
+squishMap2 :: (a -> [b]) -> [a] -> [b]
+squishMap2 f = foldr (\x y -> f x ++ y) []
 
 -- 9 
 squishAgain :: [[a]] -> [a]
@@ -121,7 +132,7 @@ squishAgain = squishMap1 id
 
 -- 10
 maxBy :: (a -> a -> Ordering) -> [a] -> a 
-maxBy f xs = foldr (\x y -> if (f x y) == GT then x else y) (last xs) xs
+maxBy f xs = foldr (\x y -> if f x y == GT then x else y) (last xs) xs
 
 maxBy2 :: (a -> a -> Ordering) -> [a] -> Maybe a 
 maxBy2 _ []  = Nothing
@@ -132,4 +143,4 @@ maxBy2 f (x:y:xs)
 
 -- 11
 minBy :: (a -> a -> Ordering) -> [a] -> a 
-minBy f xs = foldr (\x y -> if (f x y) == LT then x else y) (last xs) xs
+minBy f xs = foldr (\x y -> if f x y == LT then x else y) (last xs) xs
