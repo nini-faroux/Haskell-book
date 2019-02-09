@@ -27,7 +27,7 @@ dependencies:
 - checkers
 
 library:
-  source-dirs: src
+  source-dirs: solutions
 
 executables:
   haskellbook-exercises-exe:
