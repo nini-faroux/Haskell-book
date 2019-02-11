@@ -3,12 +3,12 @@ module Chap16.EitherFunc where
 import Test.QuickCheck
 
 data Sum' a b =
-    First a 
+    First' a 
   | Second b
   deriving (Eq, Show)
 
 instance Functor (Sum' a) where
-  fmap f (First a) = First a
+  fmap f (First' a) = First' a
   fmap f (Second b) = Second $ f b
 
 instance (Arbitrary a, Arbitrary b) => 
@@ -19,7 +19,7 @@ sumGen :: (Arbitrary a, Arbitrary b) => Gen (Sum' a b)
 sumGen = do
     a <- arbitrary 
     b <- arbitrary 
-    frequency [(1, return $ First a), (3, return $ Second b)]
+    frequency [(1, return $ First' a), (3, return $ Second b)]
 
 functorIdentity :: (Functor f, Eq (f a)) => f a -> Bool
 functorIdentity f = fmap id f == f

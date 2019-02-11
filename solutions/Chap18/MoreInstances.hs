@@ -82,28 +82,28 @@ checkersEith = do
     quickBatch (monad trigEither)
 
 -- 3
-newtype Identity a = Identity a deriving (Eq, Ord, Show)
+newtype Identity' a = Identity' a deriving (Eq, Ord, Show)
 
-instance Functor Identity where
-  fmap f (Identity x) = Identity $ f x
+instance Functor Identity' where
+  fmap f (Identity' x) = Identity' $ f x
 
-instance Applicative Identity where
-  pure = Identity
-  (Identity f) <*> (Identity x) = Identity $ f x
+instance Applicative Identity' where
+  pure = Identity'
+  (Identity' f) <*> (Identity' x) = Identity' $ f x
 
-instance Monad Identity where
+instance Monad Identity' where
   return = pure 
-  (Identity x) >>= f = f x 
+  (Identity' x) >>= f = f x 
 
 instance Arbitrary a =>
-        Arbitrary (Identity a) where
-  arbitrary = Identity <$> arbitrary
+        Arbitrary (Identity' a) where
+  arbitrary = Identity' <$> arbitrary
 
 instance Eq a => 
-        EqProp (Identity a) where
+        EqProp (Identity' a) where
   (=-=) = eq
 
-trigId :: Identity SSI
+trigId :: Identity' SSI
 trigId = undefined 
 
 checkersId :: IO ()
