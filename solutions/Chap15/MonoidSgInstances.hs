@@ -158,29 +158,29 @@ twoTest = do
     quickCheck (monoidRightId :: TwoId)
     quickCheck (monoidLeftId :: TwoId)
 
--- 2, Identity 
-newtype Identity a = Identity a deriving (Eq, Show)
+-- 2, Identity' 
+newtype Identity' a = Identity' a deriving (Eq, Show)
 
 instance Monoid a => 
-        Monoid (Identity a) where
-  mempty = Identity mempty
+        Monoid (Identity' a) where
+  mempty = Identity' mempty
   mappend = (<>)
 
 instance Semigroup a => 
-        Semigroup (Identity a) where
-  (Identity x) <> (Identity y) = Identity (x <> y)
+        Semigroup (Identity' a) where
+  (Identity' x) <> (Identity' y) = Identity' (x <> y)
 
 instance Arbitrary a => 
-        Arbitrary (Identity a) where
+        Arbitrary (Identity' a) where
   arbitrary = idGen
 
-idGen :: Arbitrary a => Gen (Identity a)
+idGen :: Arbitrary a => Gen (Identity' a)
 idGen = do
     a <- arbitrary 
-    return (Identity a)
+    return (Identity' a)
 
-type IdAssoc = Identity String -> Identity String -> Identity String -> Bool
-type IdId = Identity String -> Bool
+type IdAssoc = Identity' String -> Identity' String -> Identity' String -> Bool
+type IdId = Identity' String -> Bool
 
 identTest :: IO () 
 identTest = do
