@@ -158,7 +158,7 @@ appendVal x (Consy y ys) = Consy y (appendVal x ys)
 
 instance Foldable Listy where
   foldr _ z Empty' = z
-  foldr f z (Consy x xs) = f x z
+  foldr f z (Consy x xs) = f x (foldr f z xs)
 
 instance Traversable Listy where
   traverse :: Applicative f => (a -> f b) -> Listy a -> f (Listy b)
