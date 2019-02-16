@@ -13,3 +13,12 @@ ask' = Reader' $ \x -> x
 
 ask'' :: Reader' a a
 ask'' = Reader' id
+
+asks' :: (r -> a) -> Reader' r a 
+asks' f = Reader' $ \x -> f x
+
+myLiftA2 :: Applicative f => (a -> b -> c) -> f a -> f b -> f c
+myLiftA2 f fa fb = f <$> fa <*> fb
+
+liftATwo :: Applicative f => (a -> b -> c) -> f a -> f b -> f c
+liftATwo = ((<*>) .) . (<$>)
