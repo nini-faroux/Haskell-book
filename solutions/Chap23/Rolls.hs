@@ -16,13 +16,13 @@ data Die =
 
 type Count = Int 
 type Target = Int 
-type Sum = Int 
+type Sum' = Int 
 
 -- 1
 rollsToGetN :: Target -> StdGen -> Int 
 rollsToGetN n g = go 0 0 n g 
   where 
-    go :: Sum -> Count -> Target -> StdGen -> Int 
+    go :: Sum' -> Count -> Target -> StdGen -> Int 
     go sum count target gen 
       | sum >= target = count 
       | otherwise = let (die, nextGen) = randomR (1, 6) gen
@@ -32,7 +32,7 @@ rollsToGetN n g = go 0 0 n g
 rollsCountLogged :: Target -> StdGen -> (Int, [Die]) 
 rollsCountLogged t g = go 0 0 t g (0, [])
   where
-    go :: Sum -> Count -> Target -> StdGen -> (Int, [Die]) -> (Int, [Die])
+    go :: Sum' -> Count -> Target -> StdGen -> (Int, [Die]) -> (Int, [Die])
     go sum count target gen acc 
       | sum >= target = acc 
       | otherwise = let (die, nextGen) = randomR (1, 6) gen 
