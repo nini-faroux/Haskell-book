@@ -14,4 +14,11 @@ instance Semigroup s =>
   pure x = State' $ \s -> (x, s)
 
   (<*>) :: State' s (a -> b) -> State' s a -> State' s b
-  (State' sab) <*> (State' g) = State' $ \s -> ((fst $ sab s) (fst $ g s), (snd $ sab s) <> (snd $ g s))
+  (State' sab) <*> (State' g) = State' $ \s -> ((fst $ sab s) (fst $ g s), snd (sab s) <> snd (g s))
+
+instance Semigroup s =>
+        Monad (State' s) where
+  return = pure 
+
+  (>>=) :: State' s a -> (a -> State' s b) -> State' s b
+  (State' f) >>= g = State' $ \s -> runState' (g . fst $ f s) (snd (f s) <> s)
