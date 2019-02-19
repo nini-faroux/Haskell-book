@@ -25,6 +25,16 @@ dependencies:
 - QuickCheck
 - hspec
 - checkers
+- scotty
+- bytestring
+- text
+- network
+- network-uri
+- random
+- hedis
+- mtl
+- transformers
+- trifecta
 
 library:
   source-dirs: solutions
