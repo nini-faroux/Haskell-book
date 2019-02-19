@@ -3,9 +3,6 @@ module Chap24.ParserOne where
 import Text.Trifecta
 
 -- 1
-eofParse :: Parser a -> Result a
-eofParse p = parseString p mempty "1234"
-
 oneEof :: Parser ()
 oneEof = char '1' >> eof
 
@@ -22,17 +19,26 @@ p123 input
 
 -- 3
 string' :: (Monad m, CharParsing m) => String -> m String 
-string' input = go input [] 
+string' = foldr (\x y -> char x >>= \a -> (:) a <$> y) (return []) 
+
+-- or 
+string'' :: (Monad m, CharParsing m) => String -> m String 
+string'' input = go input [] 
   where
     go [] acc     = return acc 
     go (x:xs) acc = char x >>= \x -> go xs (acc ++ [x])
 
-pnl :: String -> IO ()
-pnl s = putStrLn ('\n' : s)
+----
+eofParse :: Parser a -> Result a
+eofParse p = parseString p mempty "1234"
 
 mainParse :: IO ()
 mainParse = do
-    pnl "one-eof:"
+    print $ parseString (string' "abc") mempty "abcd"
+    print $ parseString (string' "abc") mempty "arbcd"
+    print $ parseString (string'' "abc") mempty "abcd" 
+    print $ p123 "1"
+    print $ p123 "12"
+    print $ p123 "123"
     print $ eofParse oneEof
-    pnl "two-eof:"
     print $ eofParse oneTwoEof
