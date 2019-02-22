@@ -17,3 +17,15 @@ instance Applicative m =>
 
   (<*>) :: EitherT e m (a -> b) -> EitherT e m a -> EitherT e m b
   (EitherT emab) <*> (EitherT ema) = EitherT $ (<*>) <$> emab <*> ema
+
+instance Monad m => 
+        Monad (EitherT e m) where
+  return = pure 
+
+  (>>=) :: EitherT e m a -> (a -> EitherT e m b) -> EitherT e m b
+  (EitherT ema) >>= f = 
+          EitherT $ do
+              e <- ema 
+              case e of 
+                  (Left x)  -> return $ Left x
+                  (Right y) -> runEitherT $ f y
