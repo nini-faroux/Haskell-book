@@ -37,3 +37,11 @@ swapEitherT (EitherT ema) = EitherT $ swapEither <$> ema
 swapEither :: Either e a -> Either a e 
 swapEither (Left x) = Right x 
 swapEither (Right y) = Left y
+
+-- 5
+eitherT :: Monad m => (a -> m c) -> (b -> m c) -> EitherT a m b -> m c 
+eitherT f g (EitherT amb) = do 
+        e <- amb
+        case e of 
+            (Left x)  -> f x 
+            (Right y) -> g y
