@@ -29,3 +29,11 @@ instance Monad m =>
               case e of 
                   (Left x)  -> return $ Left x
                   (Right y) -> runEitherT $ f y
+
+-- 4 
+swapEitherT :: Functor m => EitherT e m a -> EitherT a m e 
+swapEitherT (EitherT ema) = EitherT $ swapEither <$> ema
+
+swapEither :: Either e a -> Either a e 
+swapEither (Left x) = Right x 
+swapEither (Right y) = Left y
