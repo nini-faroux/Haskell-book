@@ -12,3 +12,16 @@ instance Applicative m =>
 
 swap :: (a, b) -> (b, a)
 swap (x, y) = (y, x)
+
+instance Monad m =>
+        Applicative (StateT s m) where
+  pure :: a -> StateT s m a 
+  pure x = StateT $ \s -> pure (x, s)
+
+  (<*>) :: StateT s m (a -> b) -> StateT s m a -> StateT s m b
+  (StateT smab) <*> (StateT sma) = 
+          StateT $ \s -> do
+              a  <- fst <$> sma s 
+              f  <- fst <$> smab s 
+              s' <- snd <$> sma s
+              return (f a, s')
