@@ -25,3 +25,14 @@ instance Monad m =>
               f  <- fst <$> smab s 
               s' <- snd <$> sma s
               return (f a, s')
+
+instance Monad m => 
+        Monad (StateT s m) where 
+  return = pure 
+
+  (>>=) :: StateT s m a -> (a -> StateT s m b) -> StateT s m b
+  (StateT sma) >>= f =
+          StateT $ \s -> do
+              a  <- fst <$> sma s 
+              s' <- snd <$> sma s
+              runStateT (f a) s'
