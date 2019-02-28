@@ -2,6 +2,8 @@
 
 module Chap26.StateT where
 
+import Control.Monad.Trans
+
 newtype StateT s m a = 
         StateT { runStateT :: s -> m (a, s) }
 
@@ -36,3 +38,10 @@ instance Monad m =>
               a  <- fst <$> sma s 
               s' <- snd <$> sma s
               runStateT (f a) s'
+
+instance MonadTrans (StateT s) where
+  lift :: Monad m => m a -> StateT s m a
+  lift m = 
+      StateT $ \s -> do
+         a <- m 
+         return (a, s)
