@@ -40,4 +40,4 @@ instance MonadTrans MaybeT where
 instance (MonadIO m) =>
         MonadIO (MaybeT m) where
   liftIO :: IO a -> MaybeT m a
-  liftIO = lift . liftIO
+  liftIO = liftIO

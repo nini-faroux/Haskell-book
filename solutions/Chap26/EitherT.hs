@@ -33,6 +33,7 @@ instance Monad m =>
                   (Right y) -> runEitherT $ f y
 
 instance MonadTrans (EitherT e) where 
+  lift :: Monad m => m a -> EitherT e m a
   lift = EitherT . fmap Right
 
 -- 4 
