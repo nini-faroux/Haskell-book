@@ -45,3 +45,8 @@ instance MonadTrans (StateT s) where
       StateT $ \s -> do
          a <- m 
          return (a, s)
+
+instance MonadIO m => 
+        MonadIO (StateT s m) where 
+  liftIO :: IO a -> StateT s m a
+  liftIO = liftIO
