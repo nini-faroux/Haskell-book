@@ -1,5 +1,8 @@
 module PartOne.Sols where 
 
+import qualified Data.Map as Map
+import Data.Maybe (isNothing)
+
 -- 1 
 -- Find the last element of a list
 myLast :: [a] -> Maybe a 
@@ -43,3 +46,16 @@ palindrome :: Eq a => [a] -> Bool
 palindrome xs
   | rev xs == xs = True 
   | otherwise    = False
+
+-- 8 
+-- Eliminate consecutive duplicates of list elements.
+compress :: Eq a => [a] -> [a] 
+compress = foldr (\x xs -> x : filter (/= x) xs) []
+
+compress' :: (Eq a, Ord a) => [a] -> [a] 
+compress' xs = go xs Map.empty [] 
+  where
+    go [] _ acc = acc 
+    go (y:ys) mp acc 
+      | isNothing $ Map.lookup y mp = go ys (Map.insert y 1 mp) (acc ++ [y])
+      | otherwise                   = go ys mp acc
