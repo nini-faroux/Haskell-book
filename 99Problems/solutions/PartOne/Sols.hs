@@ -27,3 +27,13 @@ kthElem xs n
 -- Find the number of elements of a list.
 length' :: [a] -> Int 
 length' = foldr (\_ y -> 1 + y) 0
+
+-- 5
+-- Reverse a list 
+rev :: [a] -> [a] 
+rev = foldr (\x xs -> xs ++ [x]) []
+
+rev' :: [a] -> [a] 
+rev' [] = [] 
+rev' xs = last xs : rev (init xs)
+
