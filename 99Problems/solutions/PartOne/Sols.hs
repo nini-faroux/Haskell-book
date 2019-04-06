@@ -59,3 +59,18 @@ compress' xs = go xs Map.empty []
     go (y:ys) mp acc 
       | isNothing $ Map.lookup y mp = go ys (Map.insert y 1 mp) (acc ++ [y])
       | otherwise                   = go ys mp acc
+
+-- 9
+-- Pack consecutive duplicates of list elements into sublists.
+pack :: Eq a => [a] -> [[a]]
+pack []  = [] 
+pack [x] = [[x]]
+pack xs  = go (drop 1 xs) [head xs] [] 
+  where 
+    go [] prevs acc = append prevs acc 
+    go (x:xs) prevs acc 
+      | x == head prevs = go xs (x : prevs) acc 
+      | otherwise       = go xs [x] (append prevs acc) 
+
+append :: [a] -> [[a]] -> [[a]]
+append xs = foldr (:) [xs] 
