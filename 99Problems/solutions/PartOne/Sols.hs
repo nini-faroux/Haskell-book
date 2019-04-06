@@ -22,3 +22,8 @@ kthElem :: [a] -> Int -> Maybe a
 kthElem xs n
   | n > length xs || n < 1 = Nothing 
   | otherwise              = Just . head $ drop (n-1) xs
+
+-- 4
+-- Find the number of elements of a list.
+length' :: [a] -> Int 
+length' = foldr (\_ y -> 1 + y) 0
