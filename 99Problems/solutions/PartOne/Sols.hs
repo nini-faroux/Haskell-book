@@ -37,3 +37,9 @@ rev' :: [a] -> [a]
 rev' [] = [] 
 rev' xs = last xs : rev (init xs)
 
+-- 6
+--  Find out whether a list is a palindrome. A palindrome can be read forward or backward
+palindrome :: Eq a => [a] -> Bool 
+palindrome xs
+  | rev xs == xs = True 
+  | otherwise    = False
