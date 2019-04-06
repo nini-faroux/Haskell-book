@@ -36,6 +36,7 @@ length' = foldr (\_ y -> 1 + y) 0
 rev :: [a] -> [a] 
 rev = foldr (\x xs -> xs ++ [x]) []
 
+-- or
 rev' :: [a] -> [a] 
 rev' [] = [] 
 rev' xs = last xs : rev (init xs)
@@ -52,6 +53,7 @@ palindrome xs
 compress :: Eq a => [a] -> [a] 
 compress = foldr (\x xs -> x : filter (/= x) xs) []
 
+-- or
 compress' :: (Eq a, Ord a) => [a] -> [a] 
 compress' xs = go xs Map.empty [] 
   where
@@ -64,7 +66,6 @@ compress' xs = go xs Map.empty []
 -- Pack consecutive duplicates of list elements into sublists.
 pack :: Eq a => [a] -> [[a]]
 pack []  = [] 
-pack [x] = [[x]]
 pack xs  = go (drop 1 xs) [head xs] [] 
   where 
     go [] prevs acc = append prevs acc 
@@ -74,3 +75,9 @@ pack xs  = go (drop 1 xs) [head xs] []
 
 append :: [a] -> [[a]] -> [[a]]
 append xs = foldr (:) [xs] 
+
+-- 10
+-- encode "aaaabccaadeeee"
+-- [(4,'a'),(1,'b'),(2,'c'),(2,'a'),(1,'d'),(4,'e')]
+encode :: Eq a => [a] -> [(Int, a)]
+encode xs = zip (length <$> pack xs) (head <$> pack xs)
