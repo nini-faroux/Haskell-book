@@ -29,3 +29,12 @@ decodeMod = concatMap decode
 decode :: Encode a -> [a]
 decode (Multiple n x) = replicate n x
 decode (Single x) = [x]
+
+
+partTwoTest :: IO () 
+partTwoTest = do
+    putStrLn "encodeModified \"aaaabccaadeeee\""
+    print $ encodeMod "aaaabccaadeeee"
+
+    putStrLn "decodeModified [Multiple 4 'a',Single 'b',Multiple 2 'c', Multiple 2 'a',Single 'd',Multiple 4 'e']"
+    print $ decodeMod [Multiple 4 'a',Single 'b',Multiple 2 'c', Multiple 2 'a',Single 'd',Multiple 4 'e']
