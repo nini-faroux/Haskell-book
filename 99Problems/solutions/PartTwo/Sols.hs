@@ -18,3 +18,14 @@ enc :: [a] -> Encode a
 enc xs 
   | length xs > 1 = Multiple (length xs) (head xs)
   | otherwise     = Single (head xs)
+
+-- 12
+-- decodeModified [Multiple 4 'a',Single 'b',Multiple 2 'c', Multiple 2 'a',Single 'd',Multiple 4 'e']
+-- "aaaabccaadeeee"
+
+decodeMod :: [Encode a] -> [a] 
+decodeMod = concatMap decode 
+
+decode :: Encode a -> [a]
+decode (Multiple n x) = replicate n x
+decode (Single x) = [x]
