@@ -97,3 +97,35 @@ append xs = foldr (:) [xs]
 -- [(4,'a'),(1,'b'),(2,'c'),(2,'a'),(1,'d'),(4,'e')]
 encode :: Eq a => [a] -> [(Int, a)]
 encode xs = zip (length <$> pack xs) (head <$> pack xs)
+
+partOneTest :: IO () 
+partOneTest = do
+    putStrLn "myLast [1,2,3,4]"
+    print $ myLast [1,2,3,4]
+
+    putStrLn "sndLast ['a'..'z']"
+    print $ sndLast ['a'..'z']
+
+    putStrLn "kthElem \"haskell\" 5"
+    print $ kthElem "haskell" 5
+    
+    putStrLn "myLength [123, 456, 789]"
+    print $ length' [123, 456, 789]
+    
+    putStrLn "myReverse \"A man, a plan, a canal, panama!\""
+    print $ rev "A man, a plan, a canal, panama!"
+    
+    putStrLn "palindrome \"madamimadam\""
+    print $ palindrome "madamimadam"
+
+    putStrLn "flatten (List [Elem 1, List [Elem 2, List [Elem 3, Elem 4], Elem 5]])"
+    print $ flatten (List [Elem 1, List [Elem 2, List [Elem 3, Elem 4], Elem 5]])
+
+    putStrLn "compress \"aaaabccaadeeee\""
+    print $ compress "aaaabccaadeeee"
+
+    putStrLn "pack ['a', 'a', 'a', 'a', 'b', 'c', 'c', 'a', 'a', 'd', 'e', 'e', 'e', 'e']"
+    print $ pack ['a', 'a', 'a', 'a', 'b', 'c', 'c', 'a', 'a', 'd', 'e', 'e', 'e', 'e']
+
+    putStrLn "encode \"aaaabccaadeeee\"" 
+    print $ encode "aaaabccaadeeee"
