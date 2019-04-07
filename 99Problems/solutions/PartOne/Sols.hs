@@ -42,11 +42,27 @@ rev' [] = []
 rev' xs = last xs : rev (init xs)
 
 -- 6
---  Find out whether a list is a palindrome. A palindrome can be read forward or backward
+--  Find out whether a list is a palindrome 
 palindrome :: Eq a => [a] -> Bool 
 palindrome xs
   | rev xs == xs = True 
   | otherwise    = False
+
+-- 7
+-- Flatten a nested list structure 
+-- flatten (List [Elem 1, List [Elem 2, List [Elem 3, Elem 4], Elem 5]])
+data NestedList a =
+    Elem a
+  | List [NestedList a]
+  deriving Show
+
+flatten :: NestedList a -> [a] 
+flatten xs = go xs [] 
+  where
+    go :: NestedList a -> [a] -> [a]
+    go (List []) acc     = acc 
+    go (Elem x) acc      = [x]
+    go (List (x:xs)) acc = go (List xs) (acc ++ flatten x)
 
 -- 8 
 -- Eliminate consecutive duplicates of list elements.
@@ -65,8 +81,8 @@ compress' xs = go xs Map.empty []
 -- 9
 -- Pack consecutive duplicates of list elements into sublists.
 pack :: Eq a => [a] -> [[a]]
-pack []  = [] 
-pack xs  = go (drop 1 xs) [head xs] [] 
+pack [] = [] 
+pack xs = go (drop 1 xs) [head xs] [] 
   where 
     go [] prevs acc = append prevs acc 
     go (x:xs) prevs acc 
