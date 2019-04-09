@@ -36,7 +36,11 @@ insert x (Node l y r)
 testTree :: BinTree Integer 
 testTree = Node (Node Leaf 1 Leaf) 2 (Node Leaf 3 Leaf)
 
+appTree :: BinTree (Integer -> Integer) 
+appTree = Node (Node Leaf (*2) Leaf) (+10) (Node Leaf (*4) Leaf)
+
 testBinTree :: IO () 
 testBinTree = do 
     print testTree
     print $ (*2) <$> testTree
+    print $ appTree <*> testTree
