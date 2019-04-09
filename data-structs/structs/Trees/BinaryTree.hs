@@ -15,6 +15,15 @@ instance Applicative BinTree where
   _ <*> Leaf = Leaf 
   (Node lf f rf) <*> (Node l x r) = Node (lf <*> l) (f x) (rf <*> r)
 
+instance Monad BinTree where 
+  return = pure 
+  Leaf >>= _ = Leaf 
+  (Node l x r) >>= f = do
+          l' <- l
+          r' <- r 
+          x' <- f x
+          Node (f l') x' (f r')
+
 foldTree :: (b -> a -> b) -> b -> BinTree a -> b
 foldTree _ z Leaf = z
 foldTree f z (Node l x r) = foldTree f (foldTree f z l `f` x) r
