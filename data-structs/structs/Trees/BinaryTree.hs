@@ -15,6 +15,10 @@ instance Applicative BinTree where
   _ <*> Leaf = Leaf 
   (Node lf f rf) <*> (Node l x r) = Node (lf <*> l) (f x) (rf <*> r)
 
+foldTree :: (b -> a -> b) -> b -> BinTree a -> b
+foldTree _ z Leaf = z
+foldTree f z (Node l x r) = foldTree f (foldTree f z l `f` x) r
+
 inOrder :: BinTree a -> [a] 
 inOrder Leaf = []
 inOrder (Node l x r) = inOrder l ++ [x] ++ inOrder r
