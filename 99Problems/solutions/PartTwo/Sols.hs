@@ -56,6 +56,12 @@ dupli xs = join $ zipWith replicate (fst <$> dupEnc xs) (head . snd <$> dupEnc x
 dupEnc :: Eq a => [a] -> [(Int, [a])]
 dupEnc xs = zip ((*2) . length <$> pack xs) (pack xs)
 
+-- 15
+-- repli "abc" 3
+-- "aaabbbccc"
+repli :: [a] -> Int -> [a] 
+repli xs n = xs >>= replicate n 
+
 --------------------
 
 partTwoTest :: IO () 
