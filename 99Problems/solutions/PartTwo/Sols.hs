@@ -62,6 +62,17 @@ dupEnc xs = zip ((*2) . length <$> pack xs) (pack xs)
 repli :: [a] -> Int -> [a] 
 repli xs n = xs >>= replicate n 
 
+-- 16
+-- dropEvery "abcdefghik" 3
+-- "abdeghk"
+dropEvery :: [a] -> Int -> [a] 
+dropEvery xs n = go xs 1 []
+  where 
+    go [] _ acc = acc 
+    go (x:xs) cnt acc
+      | cnt == n = go xs 1 acc 
+      | otherwise = go xs (cnt+1) (acc++[x])
+
 --------------------
 
 partTwoTest :: IO () 
