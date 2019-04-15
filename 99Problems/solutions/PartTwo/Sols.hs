@@ -1,6 +1,7 @@
 module PartTwo.Sols where 
 
 import PartOne.Sols
+import Control.Monad (join)
 
 -- 11
 -- encodeModified "aaaabccaadeeee"
@@ -45,6 +46,15 @@ app :: a -> Int -> [Encode a] -> [Encode a]
 app p c a
    | c == 1    = a ++ [Single p]
    | otherwise = a ++ [Multiple c p]
+
+-- 14
+-- * (dupli '(a b c c d))
+-- (A A B B C C C C D D)
+dupli :: Eq a => [a] -> [a]
+dupli xs = join $ zipWith replicate (fst <$> dupEnc xs) (head . snd <$> dupEnc xs)
+
+dupEnc :: Eq a => [a] -> [(Int, [a])]
+dupEnc xs = zip ((*2) . length <$> pack xs) (pack xs)
 
 --------------------
 
