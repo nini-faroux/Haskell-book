@@ -30,6 +30,23 @@ decode :: Encode a -> [a]
 decode (Multiple n x) = replicate n x
 decode (Single x) = [x]
 
+-- 13 
+encodeDirect :: Eq a => [a] -> [Encode a] 
+encodeDirect [] = []
+encodeDirect xs = go xs (head xs) 0 [] 
+  where 
+    go [] prev count acc = app prev count acc 
+    go (x:xs) prev count acc 
+      | x == prev  = go xs prev (count+1) acc
+      | count == 1 = go xs x 1 (acc ++ [Single prev])
+      | otherwise  = go xs x 1 (acc ++ [Multiple count prev])
+
+app :: a -> Int -> [Encode a] -> [Encode a]
+app p c a
+   | c == 1    = a ++ [Single p]
+   | otherwise = a ++ [Multiple c p]
+
+--------------------
 
 partTwoTest :: IO () 
 partTwoTest = do
