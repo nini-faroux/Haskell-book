@@ -1,6 +1,7 @@
 module Tutorial.Exercises where
 
 import Conduit
+import Control.Monad.Trans (lift)
 
 -- 1. EXERCISE Rewrite sinkGiven to not use do-notation. Hint: it’ll be easier to go Applicative
 
@@ -56,6 +57,7 @@ testYieldSol' :: IO ()
 testYieldSol' = runConduit $ yieldMany' [1..100] .| trans .| mapM_C print
 
 -- 4. EXERCISE Try implementing filterC and mapMC. For the latter, you’ll need to use the lift function.
+-- solution
 filterC' :: Monad m => (a -> Bool) -> ConduitT a a m () 
 filterC' f = loop
   where
@@ -70,3 +72,24 @@ testFilter :: IO ()
 testFilter = runConduit $ yieldMany [1..10] 
                        .| filterC' even 
                        .| mapM_C print
+
+-- solution
+mapMC' :: Monad m => (a -> m b) -> ConduitT a b m () 
+mapMC' f = loop 
+  where
+    loop = do 
+        mx <- await 
+        case mx of 
+          Nothing -> return () 
+          Just x -> do
+              val <- lift $ f x
+              yield val
+              loop
+
+mag :: Int -> IO Int
+mag x = do
+  putStrLn $ "doubling " ++ show x
+  return $ x * 2
+
+testMapMC :: IO ()
+testMapMC = runConduit $ yieldMany [1..5] .| mapMC' mag .| mapM_C print
