@@ -54,3 +54,19 @@ testYieldSol = runConduit $ yieldMany' "ab" .| mapM_C print
 
 testYieldSol' :: IO ()
 testYieldSol' = runConduit $ yieldMany' [1..100] .| trans .| mapM_C print
+
+-- 4. EXERCISE Try implementing filterC and mapMC. For the latter, you’ll need to use the lift function.
+filterC' :: Monad m => (a -> Bool) -> ConduitT a a m () 
+filterC' f = loop
+  where
+    loop = do
+        mx <- await 
+        case mx of 
+          Nothing -> return () 
+          Just x -> if f x then yield x >> loop 
+                           else loop 
+
+testFilter :: IO () 
+testFilter = runConduit $ yieldMany [1..10] 
+                       .| filterC' even 
+                       .| mapM_C print
