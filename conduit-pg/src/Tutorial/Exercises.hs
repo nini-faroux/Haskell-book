@@ -86,10 +86,10 @@ mapMC' f = loop
               yield val
               loop
 
-mag :: Int -> IO Int
-mag x = do
+double :: Int -> IO Int
+double x = do
   putStrLn $ "doubling " ++ show x
   return $ x * 2
 
 testMapMC :: IO ()
-testMapMC = runConduit $ yieldMany [1..5] .| mapMC' mag .| mapM_C print
+testMapMC = runConduit $ yieldMany [1..10] .| filterC' odd .| mapMC' double .| mapM_C print
