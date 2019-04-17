@@ -39,4 +39,18 @@ transGiven = do
     mapC (* 2)
 
 exTwo :: IO ()
-exTwo = runConduit $ yieldMany [1..10] .| trans .| mapM_C print 
+exTwo = runConduit $ yieldMany [1..100] .| trans .| mapM_C print 
+
+-- 3. EXERCISE Reimplement yieldMany for lists using the yield primitive and monadic composition.
+-- solution
+yieldMany' :: Monad m => [a] -> ConduitT i a m ()
+yieldMany' xs = 
+  if null xs
+     then return () 
+     else yield (head xs) >> yieldMany' (drop 1 xs)
+
+testYieldSol :: IO () 
+testYieldSol = runConduit $ yieldMany' "ab" .| mapM_C print
+
+testYieldSol' :: IO ()
+testYieldSol' = runConduit $ yieldMany' [1..100] .| trans .| mapM_C print
