@@ -93,3 +93,19 @@ double x = do
 
 testMapMC :: IO ()
 testMapMC = runConduit $ yieldMany [1..10] .| filterC' odd .| mapMC' double .| mapM_C print
+
+-- 5. EXERCISE Implement a peek function that gets the next value from upstream, if available, and then puts it back on the stream
+peek :: Monad m => ConduitT i i m () 
+peek = do
+  mx <- await 
+  case mx of 
+    Nothing -> return () 
+    Just x -> do
+        yield x
+        leftover x
+
+testPeek :: IO ()
+testPeek = print $ runConduitPure $ yieldMany [1..10] .| do
+    x <- peek .| sinkList
+    y <- sinkList
+    return (x, y)
