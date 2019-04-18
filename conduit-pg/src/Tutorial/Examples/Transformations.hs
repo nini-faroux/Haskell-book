@@ -1,4 +1,4 @@
-module Tutorial.Transformations where 
+module Tutorial.Examples.Transformations where 
 
 import Conduit 
 

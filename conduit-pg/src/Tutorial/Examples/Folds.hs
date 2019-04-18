@@ -1,4 +1,4 @@
-module Tutorial.Folds where 
+module Tutorial.Examples.Folds where 
 
 import Conduit 
 import Data.Monoid (Product (..), Sum (..))

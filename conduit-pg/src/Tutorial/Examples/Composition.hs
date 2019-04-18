@@ -1,4 +1,4 @@
-module Tutorial.Composition where
+module Tutorial.Examples.Composition where
 
 import Conduit 
 

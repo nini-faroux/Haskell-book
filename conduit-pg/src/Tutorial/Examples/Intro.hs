@@ -1,4 +1,4 @@
-module Tutorial.Intro where 
+module Tutorial.Examples.Intro where 
 
 import Conduit 
 
@@ -51,7 +51,7 @@ magic x = do
 mainFive :: IO () 
 mainFive = do
   putStrLn "my list solution: "
-  mapM_ print =<< takeWhile (< 18) <$> (traverse magic $ take 10 [1..]) 
+  mapM_ print =<< takeWhile (< 18) <$> traverse magic (take 10 [1..]) 
   putStrLn "given list version: "
   mapM magic (take 10 [1..]) >>= mapM_ print . takeWhile (< 18)
   putStrLn "conduit version: "
