@@ -1,7 +1,11 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Tutorial.Exercises where
 
 import Conduit
 import Control.Monad.Trans (lift)
+import qualified Data.ByteString as BS
+import qualified Data.Word as W
 
 -- 1. EXERCISE Rewrite sinkGiven to not use do-notation. Hint: it’ll be easier to go Applicative
 
@@ -109,3 +113,26 @@ testPeek = print $ runConduitPure $ yieldMany [1..10] .| do
     x <- peek .| sinkList
     y <- sinkList
     return (x, y)
+
+-- 6. EXERCISE Try to implement the takeCE function on ByteStrings. 
+takeCE' :: Monad m => Int -> ConduitT BS.ByteString BS.ByteString m ()
+takeCE' = loop 
+  where
+    loop n 
+      | n <= 0 = return () 
+      | otherwise = do      
+           mx <- await
+           case mx of 
+             Nothing -> return () 
+             Just x -> do
+                if BS.null x then return ()
+                             else yield (BS.take 1 x)
+                if BS.null (BS.drop 1 x) then return () 
+                                         else leftover (BS.drop 1 x)
+                loop (n-1)
+
+testTakeCE :: IO [BS.ByteString]
+testTakeCE = runConduitRes
+     $ sourceFile "test/input.txt"
+    .| takeCE' 3
+    .| sinkList
