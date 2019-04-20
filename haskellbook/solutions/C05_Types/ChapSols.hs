@@ -39,7 +39,7 @@ r xs = xs ++ xs
 
 rev :: [a] -> [a] 
 rev [] = []
-rev xs = (last xs) : rev (init xs)
+rev xs = last xs : rev (init xs)
 
 -- 6 
 co :: (b -> c) -> (a -> b) -> a -> c
@@ -51,7 +51,7 @@ a' _ x = x
 
 -- 8
 a'' :: (a -> b) -> a -> b
-a'' f x = f x 
+a'' f = f 
 
 -- Fix it 
 -- 1
@@ -62,14 +62,14 @@ sndString :: [Char] -> [Char]
 sndString x = x ++ " over the rainbow"
 
 sing :: [Char]
-sing = if (x > y) then (fstString x) else (sndString y)
+sing = if x > y then fstString x else sndString y
   where
     x = "Singin"
     y = "Somewhere"
 
 -- 2
 sing' :: [Char]
-sing' = if (x < y) then (fstString x) else (sndString y)
+sing' = if x < y then fstString x else sndString y
   where 
     x = "Singin"
     y = "Somewhere"
@@ -78,7 +78,7 @@ sing' = if (x < y) then (fstString x) else (sndString y)
 mainFix :: IO () 
 mainFix = do
   print $ 1 + 2
-  putStrLn $ show 10
+  print 10
   print $ negate (-1)
   print ((+) 0 blah)
     where blah = negate 1
