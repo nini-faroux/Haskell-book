@@ -9,7 +9,7 @@ chk f x y = f x == y
 
 -- 2
 arith :: Num b => (a -> b) -> Integer -> a -> b
-arith f _ x = f x
+arith f _ = f 
 
 {-- does it typecheck --}
 -- 1, fixed 
