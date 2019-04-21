@@ -26,6 +26,11 @@ dependencies:
 - bytestring
 - filepath
 - text
+- cryptonite
+- cryptonite-conduit
+- network
+- http-client
+- http-conduit
 
 library:
   source-dirs: src
