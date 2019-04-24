@@ -73,6 +73,14 @@ dropEvery xs n = go xs 1 []
       | cnt == n = go xs 1 acc 
       | otherwise = go xs (cnt+1) (acc++[x])
 
+-- 17
+-- > split "abcdefghik" 3
+-- ("abc", "defghik")
+
+split :: [a] -> Int -> ([a], [a])
+split xs n = (take n xs, drop n xs)
+
+
 --------------------
 
 partTwoTest :: IO () 
