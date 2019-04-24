@@ -88,12 +88,15 @@ split xs n = (take n xs, drop n xs)
 slice :: [a] -> Int -> Int -> [a] 
 slice xs i k = take (k-i+1) $ drop (i-1) xs
 
+-- 20
 -- Remove the K'th element from a list.
 -- > removeAt 2 "abcd"
 -- ('b',"acd")
+removeAt :: Int -> [a] -> ([a], [a])
+removeAt k xs = (take 1 $ drop (k-1) xs, take (k-1) xs ++ drop k xs)
 
-removeAt :: Int -> [a] -> Maybe (a, [a]) 
-removeAt n xs = go xs n 1 []
+removeAt' :: Int -> [a] -> Maybe (a, [a]) 
+removeAt' n xs = go xs n 1 []
   where 
     go [] _ _ _ = Nothing
     go (x:xs) n cnt acc 
