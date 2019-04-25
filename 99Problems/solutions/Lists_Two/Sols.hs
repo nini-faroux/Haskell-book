@@ -1,6 +1,6 @@
-module PartTwo.Sols where 
+module Lists_Two.Sols where 
 
-import PartOne.Sols
+import Lists_One.Sols
 import Control.Monad (join)
 
 -- 11

@@ -1,4 +1,4 @@
-module PartOne.Sols where 
+module Lists_One.Sols where 
 
 import qualified Data.Map as Map
 import Data.Maybe (isNothing)

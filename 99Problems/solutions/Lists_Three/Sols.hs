@@ -1,4 +1,4 @@
-module PartThree.Sols where 
+module Lists_Three.Sols where 
 
 import System.Random (randomRIO)
 import Data.Maybe (isNothing)
