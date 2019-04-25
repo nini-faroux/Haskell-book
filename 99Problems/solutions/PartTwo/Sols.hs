@@ -103,13 +103,6 @@ removeAt' n xs = go xs n 1 []
       | cnt == n  = Just (x, acc ++ xs)
       | otherwise = go xs n (cnt+1) (acc ++ [x])
 
--- 21 
--- insertAt 'X' "abcd" 2
--- "aXbcd"
-
-insertAt :: a -> [a] -> Int -> [a] 
-insertAt x xs k = take (k-1) xs ++ [x] ++ drop (k-1) xs
-
 --------------------
 
 partTwoTest :: IO () 
