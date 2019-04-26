@@ -33,8 +33,8 @@ Person json
   deriving Show
 |]
 
-type Api = SpockM () () () ()
-type ApiAction a = SpockAction () () () a
+type Api = SpockM SqlBackend () () ()
+type ApiAction a = SpockAction SqlBackend () () a
 
 app :: Api
 app = do
@@ -49,7 +49,7 @@ getPerson =
        Person { personName = "major", personAge = 432}
       ]
 
-postPerson :: SpockCtxM () () () () ()
+postPerson :: SpockCtxM () SqlBackend () () ()
 postPerson =
   post "people" $ do
     pers <- jsonBody' :: ApiAction Person
@@ -57,7 +57,8 @@ postPerson =
 
 main :: IO ()
 main = do
-  spockCfg <- defaultSpockCfg () PCNoDatabase ()
+  pool <- runStdoutLoggingT $ createSqlitePool "api.db" 5
+  spockCfg <- defaultSpockCfg () (PCPool pool) ()
   runSpock 8080 (spock spockCfg app)
 
 
