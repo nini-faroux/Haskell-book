@@ -23,7 +23,20 @@ type Api = SpockM () () () ()
 type ApiAction a = SpockAction () () () a
 
 app :: Api 
-app = get "people" $ json [Person { name = "nini", age = 400 }, Person { name = "major", age = 232 }]
+app = do
+  getPerson
+  postPerson
+
+getPerson :: SpockCtxM ctx conn sess st ()
+getPerson = 
+  get "people" $ 
+    json [Person { name = "nini", age = 500 }, Person { name = "major", age = 432}]
+
+postPerson :: SpockCtxM () () () () ()
+postPerson = 
+  post "people" $ do
+    pers <- jsonBody' :: ApiAction Person 
+    text $ "Parsed: " <> pack (show pers)
 
 main :: IO ()
 main = do
