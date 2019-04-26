@@ -38,14 +38,23 @@ type ApiAction a = SpockAction SqlBackend () () a
 
 app :: Api
 app = do
+  getPeople
   getPerson
   postPerson
 
---getPerson :: SpockCtxM ctx conn sess st ()
-getPerson =
+getPeople :: SpockCtxM ctx SqlBackend sess st ()
+getPeople =
   get "people" $ do
     people <- runSQL $ selectList [] [Asc PersonId]
     json people
+
+getPerson :: SpockCtxM () SqlBackend () () () 
+getPerson =
+  get ("people" <//> var) $ \pId -> do
+    mp <- runSQL $ P.get pId :: ApiAction (Maybe Person)
+    case mp of
+      Nothing -> errorJson 2 "Person not found"
+      Just p -> json p
 
 postPerson :: SpockCtxM () SqlBackend () () ()
 postPerson =
