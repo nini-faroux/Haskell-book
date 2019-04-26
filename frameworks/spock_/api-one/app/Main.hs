@@ -41,24 +41,37 @@ app = do
   getPerson
   postPerson
 
-getPerson :: SpockCtxM ctx conn sess st ()
+--getPerson :: SpockCtxM ctx conn sess st ()
 getPerson =
-  get "people" $
-    json 
-      [Person { personName = "nini", personAge = 500 }, 
-       Person { personName = "major", personAge = 432}
-      ]
+  get "people" $ do
+    people <- runSQL $ selectList [] [Asc PersonId]
+    json people
 
 postPerson :: SpockCtxM () SqlBackend () () ()
 postPerson =
   post "people" $ do
-    pers <- jsonBody' :: ApiAction Person
-    text $ "Parsed: " <> pack (show pers)
+    mp <- jsonBody :: ApiAction (Maybe Person)
+    case mp of 
+      Nothing -> errorJson 1 "Failed to parse request body as Person"
+      Just person -> do
+        id <- runSQL $ insert person 
+        json $ object ["result" .= String "success", "id" .= id]
+
+errorJson :: Int -> Text -> ApiAction () 
+errorJson code message = 
+  json $ 
+    object 
+    [ "result" .= String "failure"
+    , "error" .= object ["code" .= code, "message" .= message]
+    ]
+
+runSQL :: (HasSpock m, SpockConn m ~ SqlBackend) 
+       => SqlPersistT (LoggingT IO) a -> m a
+runSQL action = runQuery $ \conn -> runStdoutLoggingT $ runSqlConn action conn
 
 main :: IO ()
 main = do
   pool <- runStdoutLoggingT $ createSqlitePool "api.db" 5
   spockCfg <- defaultSpockCfg () (PCPool pool) ()
+  runStdoutLoggingT $ runSqlPool (runMigration migrateAll) pool
   runSpock 8080 (spock spockCfg app)
-
-
