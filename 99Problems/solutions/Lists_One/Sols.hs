@@ -44,9 +44,7 @@ rev' xs = last xs : rev (init xs)
 -- 6
 --  Find out whether a list is a palindrome 
 palindrome :: Eq a => [a] -> Bool 
-palindrome xs
-  | rev xs == xs = True 
-  | otherwise    = False
+palindrome xs = rev xs == xs
 
 -- 7
 -- Flatten a nested list structure 
