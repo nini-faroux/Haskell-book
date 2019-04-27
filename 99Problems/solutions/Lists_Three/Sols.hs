@@ -2,6 +2,7 @@ module Lists_Three.Sols where
 
 import System.Random (randomRIO)
 import Data.Maybe (isNothing)
+import Test.Hspec
 
 -- 21 
 -- insertAt 'X' "abcd" 2
@@ -61,3 +62,28 @@ indices xs = go xs (randomRIO (0, length xs - 1)) []
 qsort :: Ord a => [a] -> [a] 
 qsort [] = [] 
 qsort (pv:xs) = qsort [x | x <- xs, x < pv] ++ [pv] ++ qsort [x | x <- xs, x >= pv]
+
+partThreeTest :: IO () 
+partThreeTest = hspec $ do
+  describe "insertAt" $
+    it "insert an element at a given position into a list" $ 
+      insertAt 'X' "abcd" 2 `shouldBe` "aXbcd"
+  
+  describe "range" $
+    it "Create a list containing all integers within a given range" $ 
+      range 4 9 `shouldBe` [4,5,6,7,8,9]
+
+  describe "rndSelect" $
+    it "Extract a given number of randomly selected elements from a list" $ do
+      res <- rndSelect "abcdefgh" 3
+      length res `shouldBe` 3
+
+  describe "lotto" $ 
+    it "Generate a random permutation of the elements of a list" $ do
+      res <- diffSelect 6 49
+      length res `shouldBe` 6
+
+  describe "randPermu" $
+    it "Generate a random permutation of the elements in a list" $ do
+      res <- randPermu "abcdef"
+      length res `shouldBe` 6
