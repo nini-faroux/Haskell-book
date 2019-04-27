@@ -22,9 +22,9 @@ import           Data.Text               (Text, pack)
 import           GHC.Generics
 
 import           Control.Monad.Logger    (LoggingT, runStdoutLoggingT)
-import           Database.Persist        hiding (get)
+import           Database.Persist        hiding (get, delete)
 import qualified Database.Persist        as P
-import           Database.Persist.Sqlite hiding (get)
+import           Database.Persist.Sqlite hiding (get, delete)
 import           Database.Persist.TH
 
 share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
@@ -42,6 +42,7 @@ app = do
   getPeople
   getPerson
   postPerson
+  deletePerson
 
 getPeople :: SpockCtxM ctx SqlBackend sess st ()
 getPeople =
@@ -56,6 +57,16 @@ getPerson =
     case mp of
       Nothing -> setStatus status404 >> errorJson 2 "Person not found"
       Just p  -> setStatus status200 >> json p
+
+deletePerson :: SpockCtxM () SqlBackend () () ()
+deletePerson = 
+  delete ("people" <//> var) $ \pId -> do
+    mp <- runSQL $ P.get pId :: ApiAction (Maybe Person)
+    case mp of
+      Nothing -> setStatus status404 >> errorJson 2 "Person not found"
+      Just p  -> do 
+        runSQL $ P.delete (pId :: PersonId)
+        setStatus status204 
 
 postPerson :: SpockCtxM () SqlBackend () () ()
 postPerson =
