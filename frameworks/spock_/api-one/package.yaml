@@ -28,6 +28,7 @@ dependencies:
 - persistent 
 - persistent-sqlite 
 - persistent-template
+- http-types
 
 library:
   source-dirs: src

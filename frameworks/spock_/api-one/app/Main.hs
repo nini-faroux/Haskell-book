@@ -14,6 +14,7 @@ module Main where
 
 import           Web.Spock
 import           Web.Spock.Config
+import           Network.HTTP.Types
 
 import           Data.Aeson              hiding (json)
 import           Data.Monoid             ((<>))
@@ -53,8 +54,8 @@ getPerson =
   get ("people" <//> var) $ \pId -> do
     mp <- runSQL $ P.get pId :: ApiAction (Maybe Person)
     case mp of
-      Nothing -> errorJson 2 "Person not found"
-      Just p -> json p
+      Nothing -> setStatus status404 >> errorJson 2 "Person not found"
+      Just p -> setStatus status200 >> json p
 
 postPerson :: SpockCtxM () SqlBackend () () ()
 postPerson =
