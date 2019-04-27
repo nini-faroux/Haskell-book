@@ -2,6 +2,7 @@ module Lists_Two.Sols where
 
 import Lists_One.Sols
 import Control.Monad (join)
+import Test.Hspec
 
 -- 11
 -- encodeModified "aaaabccaadeeee"
@@ -10,7 +11,7 @@ import Control.Monad (join)
 data Encode a =
     Single a 
   | Multiple Int a
-  deriving Show 
+  deriving (Show, Eq) 
 
 encodeMod :: Eq a => [a] -> [Encode a] 
 encodeMod xs = enc <$> pack xs
@@ -32,6 +33,8 @@ decode (Multiple n x) = replicate n x
 decode (Single x) = [x]
 
 -- 13 
+-- encodeDirect "aaaabccaadeeee"
+-- [Multiple 4 'a',Single 'b',Multiple 2 'c', Multiple 2 'a',Single 'd',Multiple 4 'e']
 encodeDirect :: Eq a => [a] -> [Encode a] 
 encodeDirect [] = []
 encodeDirect xs = go xs (head xs) 0 [] 
@@ -106,9 +109,39 @@ removeAt' n xs = go xs n 1 []
 --------------------
 
 partTwoTest :: IO () 
-partTwoTest = do
-    putStrLn "encodeModified \"aaaabccaadeeee\""
-    print $ encodeMod "aaaabccaadeeee"
+partTwoTest = hspec $ do
+  describe "encodeModified" $ 
+    it "Modified run-length encoding" $
+      encodeMod "aaaabccaadeeee" `shouldBe` [Multiple 4 'a',Single 'b',Multiple 2 'c', Multiple 2 'a',Single 'd',Multiple 4 'e']
 
-    putStrLn "decodeModified [Multiple 4 'a',Single 'b',Multiple 2 'c', Multiple 2 'a',Single 'd',Multiple 4 'e']"
-    print $ decodeMod [Multiple 4 'a',Single 'b',Multiple 2 'c', Multiple 2 'a',Single 'd',Multiple 4 'e']
+  describe "decodeModified" $ 
+    it "Decode a run-length encoded list" $ 
+      decodeMod [Multiple 4 'a',Single 'b',Multiple 2 'c', Multiple 2 'a',Single 'd',Multiple 4 'e'] `shouldBe` "aaaabccaadeeee"
+
+  describe "encodeDirect" $
+    it "Direct Run-length encoding of a list" $ 
+      encodeDirect "aaaabccaadeeee" `shouldBe` [Multiple 4 'a',Single 'b',Multiple 2 'c', Multiple 2 'a',Single 'd',Multiple 4 'e'] 
+
+  describe "dupli" $
+    it "duplicate the elements of a list" $
+      dupli [1, 2, 3] `shouldBe` [1,1,2,2,3,3]
+
+  describe "repli" $
+    it "Replicate the elements of a list a given number of times" $
+      repli "abc" 3 `shouldBe` "aaabbbccc"
+
+  describe "dropEvery" $
+    it "Drop every N'th element from a list" $ 
+      dropEvery "abcdefghik" 3 `shouldBe` "abdeghk"
+
+  describe "split" $ 
+    it "Split a list into two parts" $ 
+      split "abcdefghik" 3 `shouldBe` ("abc", "defghik")
+
+  describe "slice" $ 
+    it "extract a slice from a list" $ 
+      slice ['a','b','c','d','e','f','g','h','i','k'] 3 7 `shouldBe` "cdefg"
+
+  describe "removeAt" $
+    it "remove the kth element from a list" $ 
+      removeAt 2 "abcd" `shouldBe` ("b","acd")
