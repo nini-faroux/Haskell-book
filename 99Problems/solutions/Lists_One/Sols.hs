@@ -94,7 +94,7 @@ removeDups :: Eq a => [a] -> [a]
 removeDups = foldr (\x xs -> x : filter (/= x) xs) []
 
 -- or
-removeDups' :: (Eq a, Ord a) => [a] -> [a] 
+removeDups' :: Ord a => [a] -> [a] 
 removeDups' xs = go xs Map.empty [] 
   where
     go [] _ acc = acc 
@@ -149,5 +149,6 @@ partOneTest = hspec $ do
       encode "aaaabccaadeeee" `shouldBe` [(4,'a'),(1,'b'),(2,'c'),(2,'a'),(1,'d'),(4,'e')]
 
   describe "removeDups" $ 
-    it "eliminate consecutive duplicates of list elements" $ 
+    it "remove duplicates from list" $ do
       removeDups' "aaaabccaadeeee" `shouldBe` "abcde"
+      removeDups "aaaabccaadeeee" `shouldBe` "abcde"
