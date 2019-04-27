@@ -66,16 +66,7 @@ flatten xs = go xs []
 -- 8 
 -- Eliminate consecutive duplicates of list elements.
 compress :: Eq a => [a] -> [a] 
-compress = foldr (\x xs -> x : filter (/= x) xs) []
-
--- or
-compress' :: (Eq a, Ord a) => [a] -> [a] 
-compress' xs = go xs Map.empty [] 
-  where
-    go [] _ acc = acc 
-    go (y:ys) mp acc 
-      | isNothing $ Map.lookup y mp = go ys (Map.insert y 1 mp) (acc ++ [y])
-      | otherwise                   = go ys mp acc
+compress = foldr (\x xs -> if take 1 xs == [x] then xs else x : xs) [] 
 
 -- 9
 -- Pack consecutive duplicates of list elements into sublists.
@@ -96,6 +87,20 @@ append xs = foldr (:) [xs]
 -- [(4,'a'),(1,'b'),(2,'c'),(2,'a'),(1,'d'),(4,'e')]
 encode :: Eq a => [a] -> [(Int, a)]
 encode xs = zip (length <$> pack xs) (head <$> pack xs)
+
+--------------------
+-- remove duplicates
+removeDups :: Eq a => [a] -> [a] 
+removeDups = foldr (\x xs -> x : filter (/= x) xs) []
+
+-- or
+removeDups' :: (Eq a, Ord a) => [a] -> [a] 
+removeDups' xs = go xs Map.empty [] 
+  where
+    go [] _ acc = acc 
+    go (y:ys) mp acc 
+      | isNothing $ Map.lookup y mp = go ys (Map.insert y 1 mp) (acc ++ [y])
+      | otherwise                   = go ys mp acc
 
 partOneTest :: IO () 
 partOneTest = hspec $ do
@@ -131,9 +136,9 @@ partOneTest = hspec $ do
       flatten (List [Elem 1, List [Elem 2, List [Elem 3, Elem 4], Elem 5]]) `shouldBe` [1,2,3,4,5]
       flatten (List [] :: NestedList Int) `shouldBe` [] 
 
-  describe "compress" $ 
-    it "eliminate consecutive duplicates of list elements" $ 
-      compress' "aaaabccaadeeee" `shouldBe` "abcade"
+  describe "compress" $
+    it "Eliminate consecutive duplicates of list elements" $ 
+      compress "aaaabccaadeeee" `shouldBe` "abcade"
 
   describe "pack" $
     it "Pack consecutive duplicates of list elements into sublists" $ 
@@ -142,3 +147,7 @@ partOneTest = hspec $ do
   describe "encode" $ 
     it "Run-length encoding of a list" $
       encode "aaaabccaadeeee" `shouldBe` [(4,'a'),(1,'b'),(2,'c'),(2,'a'),(1,'d'),(4,'e')]
+
+  describe "removeDups" $ 
+    it "eliminate consecutive duplicates of list elements" $ 
+      removeDups' "aaaabccaadeeee" `shouldBe` "abcde"
