@@ -1,6 +1,7 @@
 module Lists_One.Sols where 
 
 import qualified Data.Map as Map
+import Test.Hspec
 import Data.Maybe (isNothing)
 
 -- 1 
@@ -97,33 +98,47 @@ encode :: Eq a => [a] -> [(Int, a)]
 encode xs = zip (length <$> pack xs) (head <$> pack xs)
 
 partOneTest :: IO () 
-partOneTest = do
-    putStrLn "myLast [1,2,3,4]"
-    print $ myLast [1,2,3,4]
+partOneTest = hspec $ do
+  describe "myLast" $ 
+    it "get last element of list" $ do
+      myLast ([] :: [Int]) `shouldBe` Nothing
+      myLast [1,2,3,4] `shouldBe` (Just 4 :: Maybe Int)
 
-    putStrLn "sndLast ['a'..'z']"
-    print $ sndLast ['a'..'z']
+  describe "sndLast" $ 
+    it "get second from last" $ 
+      sndLast ['a'..'z'] `shouldBe` Just 'y'
 
-    putStrLn "kthElem \"haskell\" 5"
-    print $ kthElem "haskell" 5
-    
-    putStrLn "myLength [123, 456, 789]"
-    print $ length' [123, 456, 789]
-    
-    putStrLn "myReverse \"A man, a plan, a canal, panama!\""
-    print $ rev "A man, a plan, a canal, panama!"
-    
-    putStrLn "palindrome \"madamimadam\""
-    print $ palindrome "madamimadam"
+  describe "kthElem" $ 
+    it "get kth element of list" $
+      kthElem "haskell" 5 `shouldBe` Just 'e'
 
-    putStrLn "flatten (List [Elem 1, List [Elem 2, List [Elem 3, Elem 4], Elem 5]])"
-    print $ flatten (List [Elem 1, List [Elem 2, List [Elem 3, Elem 4], Elem 5]])
+  describe "length" $ 
+    it "find number of elements in a list" $ 
+      length' [1,2,3] `shouldBe` 3
 
-    putStrLn "compress \"aaaabccaadeeee\""
-    print $ compress "aaaabccaadeeee"
+  describe "reverse" $ 
+    it "reverse a list" $
+      rev "A man, a plan, a canal, panama!" `shouldBe` "!amanap ,lanac a ,nalp a ,nam A"
 
-    putStrLn "pack ['a', 'a', 'a', 'a', 'b', 'c', 'c', 'a', 'a', 'd', 'e', 'e', 'e', 'e']"
-    print $ pack ['a', 'a', 'a', 'a', 'b', 'c', 'c', 'a', 'a', 'd', 'e', 'e', 'e', 'e']
+  describe "palindrome" $
+    it "check if a list is a palindrome" $ do
+      palindrome "madamimadam" `shouldBe` True
+      palindrome [1,2,3] `shouldBe` False
 
-    putStrLn "encode \"aaaabccaadeeee\"" 
-    print $ encode "aaaabccaadeeee"
+  describe "flatten" $ 
+    it "flatten a nested list structure" $ do
+      flatten (Elem 5) `shouldBe` [5] 
+      flatten (List [Elem 1, List [Elem 2, List [Elem 3, Elem 4], Elem 5]]) `shouldBe` [1,2,3,4,5]
+      flatten (List [] :: NestedList Int) `shouldBe` [] 
+
+  describe "compress" $ 
+    it "eliminate consecutive duplicates of list elements" $ 
+      compress' "aaaabccaadeeee" `shouldBe` "abcade"
+
+  describe "pack" $
+    it "Pack consecutive duplicates of list elements into sublists" $ 
+      pack ['a', 'a', 'a', 'a', 'b', 'c', 'c', 'a', 'a', 'd', 'e', 'e', 'e', 'e'] `shouldBe` ["aaaa","b","cc","aa","d","eeee"]
+
+  describe "encode" $ 
+    it "Run-length encoding of a list" $
+      encode "aaaabccaadeeee" `shouldBe` [(4,'a'),(1,'b'),(2,'c'),(2,'a'),(1,'d'),(4,'e')]
