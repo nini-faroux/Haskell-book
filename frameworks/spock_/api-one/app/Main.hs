@@ -55,16 +55,17 @@ getPerson =
     mp <- runSQL $ P.get pId :: ApiAction (Maybe Person)
     case mp of
       Nothing -> setStatus status404 >> errorJson 2 "Person not found"
-      Just p -> setStatus status200 >> json p
+      Just p  -> setStatus status200 >> json p
 
 postPerson :: SpockCtxM () SqlBackend () () ()
 postPerson =
   post "people" $ do
     mp <- jsonBody :: ApiAction (Maybe Person)
     case mp of 
-      Nothing -> errorJson 1 "Failed to parse request body as Person"
+      Nothing -> setStatus status400 >> errorJson 1 "Failed to parse request body as Person"
       Just person -> do
         id <- runSQL $ insert person 
+        setStatus status201 
         json $ object ["result" .= String "success", "id" .= id]
 
 errorJson :: Int -> Text -> ApiAction () 
