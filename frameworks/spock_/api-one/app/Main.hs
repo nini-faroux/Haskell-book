@@ -1,4 +1,4 @@
-{-# LANGUAGE OverloadedStrings          #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module Main where
 
@@ -6,10 +6,10 @@ import           Web.Spock
 import           Web.Spock.Config
 
 import           Control.Monad.Logger    (LoggingT, runStdoutLoggingT)
-import           Database.Persist.Sqlite 
+import           Database.Persist.Sqlite
 
-import Api
-import Models
+import           Api
+import           Models
 
 main :: IO ()
 main = do

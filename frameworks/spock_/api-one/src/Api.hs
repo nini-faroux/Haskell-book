@@ -1,6 +1,6 @@
-module Api where 
+module Api where
 
-import Api.User
+import           Api.User
 
 app :: Api
 app = do
