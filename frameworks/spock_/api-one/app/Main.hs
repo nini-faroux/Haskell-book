@@ -28,7 +28,7 @@ import           Database.Persist.Sqlite hiding (get, delete)
 import           Database.Persist.TH
 
 share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
-Person json 
+User json 
   name Text 
   age Int
   deriving Show
@@ -39,41 +39,41 @@ type ApiAction a = SpockAction SqlBackend () () a
 
 app :: Api
 app = do
-  getPeople
-  getPerson
-  postPerson
-  deletePerson
+  getUsers
+  getUser
+  postUser
+  deleteUser
 
-getPeople :: SpockCtxM ctx SqlBackend sess st ()
-getPeople =
-  get "people" $ do
-    people <- runSQL $ selectList [] [Asc PersonId]
-    json people
+getUsers :: SpockCtxM ctx SqlBackend sess st ()
+getUsers =
+  get "users" $ do
+    users <- runSQL $ selectList [] [Asc UserId]
+    json users
 
-getPerson :: SpockCtxM () SqlBackend () () () 
-getPerson =
-  get ("people" <//> var) $ \pId -> do
-    mp <- runSQL $ P.get pId :: ApiAction (Maybe Person)
+getUser :: SpockCtxM () SqlBackend () () () 
+getUser =
+  get ("users" <//> var) $ \pId -> do
+    mp <- runSQL $ P.get pId :: ApiAction (Maybe User)
     case mp of
-      Nothing -> setStatus status404 >> errorJson 2 "Person not found"
+      Nothing -> setStatus status404 >> errorJson 2 "User not found"
       Just p  -> setStatus status200 >> json p
 
-deletePerson :: SpockCtxM () SqlBackend () () ()
-deletePerson = 
-  delete ("people" <//> var) $ \pId -> do
-    mp <- runSQL $ P.get pId :: ApiAction (Maybe Person)
+deleteUser :: SpockCtxM () SqlBackend () () ()
+deleteUser = 
+  delete ("users" <//> var) $ \pId -> do
+    mp <- runSQL $ P.get pId :: ApiAction (Maybe User)
     case mp of
-      Nothing -> setStatus status404 >> errorJson 2 "Person not found"
+      Nothing -> setStatus status404 >> errorJson 2 "User not found"
       Just p  -> do 
-        runSQL $ P.delete (pId :: PersonId)
+        runSQL $ P.delete (pId :: UserId)
         setStatus status204 
 
-postPerson :: SpockCtxM () SqlBackend () () ()
-postPerson =
-  post "people" $ do
-    mp <- jsonBody :: ApiAction (Maybe Person)
+postUser :: SpockCtxM () SqlBackend () () ()
+postUser =
+  post "users" $ do
+    mp <- jsonBody :: ApiAction (Maybe User)
     case mp of 
-      Nothing -> setStatus status400 >> errorJson 1 "Failed to parse request body as Person"
+      Nothing -> setStatus status400 >> errorJson 1 "Failed to parse request body as User"
       Just person -> do
         id <- runSQL $ insert person 
         setStatus status201 
