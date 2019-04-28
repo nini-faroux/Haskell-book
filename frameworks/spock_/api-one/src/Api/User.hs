@@ -7,7 +7,6 @@ import           Web.Spock.Config
 import           Network.HTTP.Types
 
 import           Data.Aeson              hiding (json)
-import           Data.Monoid             ((<>))
 import           Data.Text               (Text, pack)
 
 import           Control.Monad.Logger    (LoggingT, runStdoutLoggingT)

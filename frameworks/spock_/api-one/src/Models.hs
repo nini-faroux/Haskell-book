@@ -9,13 +9,12 @@
 
 module Models where 
 
-import           Database.Persist        hiding (get, delete)
-import qualified Database.Persist        as P
+import           Web.Spock
+
 import           Database.Persist.Sqlite hiding (get, delete)
 import           Database.Persist.TH
 
 import           Control.Monad.Logger    (LoggingT, runStdoutLoggingT)
-import           Web.Spock
 import           Data.Text               (Text)
 
 share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
