@@ -52,30 +52,30 @@ getUsers =
 
 getUser :: SpockCtxM () SqlBackend () () () 
 getUser =
-  get ("users" <//> var) $ \pId -> do
-    mp <- runSQL $ P.get pId :: ApiAction (Maybe User)
-    case mp of
+  get ("users" <//> var) $ \userId -> do
+    mu <- runSQL $ P.get userId :: ApiAction (Maybe User)
+    case mu of
       Nothing -> setStatus status404 >> errorJson 2 "User not found"
-      Just p  -> setStatus status200 >> json p
+      Just user  -> setStatus status200 >> json user
 
 deleteUser :: SpockCtxM () SqlBackend () () ()
 deleteUser = 
-  delete ("users" <//> var) $ \pId -> do
-    mp <- runSQL $ P.get pId :: ApiAction (Maybe User)
-    case mp of
+  delete ("users" <//> var) $ \userId -> do
+    mu <- runSQL $ P.get userId :: ApiAction (Maybe User)
+    case mu of
       Nothing -> setStatus status404 >> errorJson 2 "User not found"
-      Just p  -> do 
-        runSQL $ P.delete (pId :: UserId)
+      Just _  -> do 
+        runSQL $ P.delete (userId :: UserId)
         setStatus status204 
 
 postUser :: SpockCtxM () SqlBackend () () ()
 postUser =
   post "users" $ do
-    mp <- jsonBody :: ApiAction (Maybe User)
-    case mp of 
+    mu <- jsonBody :: ApiAction (Maybe User)
+    case mu of 
       Nothing -> setStatus status400 >> errorJson 1 "Failed to parse request body as User"
-      Just person -> do
-        id <- runSQL $ insert person 
+      Just user -> do
+        id <- runSQL $ insert user 
         setStatus status201 
         json $ object ["result" .= String "success", "id" .= id]
 
