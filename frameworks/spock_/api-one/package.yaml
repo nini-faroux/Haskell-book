@@ -31,6 +31,9 @@ dependencies:
 - http-types
 - bytestring
 - raw-strings-qq
+- hspec
+- hspec-wai
+- wai
 
 library:
   source-dirs: src

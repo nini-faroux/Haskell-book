@@ -4,8 +4,8 @@ import           Api.User
 import           Api.Root
 import           ApiTypes
 
-app :: Api
-app = do
+api :: Api
+api = do
   getRoot
   getUsers
   getUser
