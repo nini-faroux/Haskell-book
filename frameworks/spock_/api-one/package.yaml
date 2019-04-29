@@ -33,6 +33,7 @@ dependencies:
 - raw-strings-qq
 - hspec
 - hspec-wai
+- hspec-wai-json
 - wai
 
 library:
