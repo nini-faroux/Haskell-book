@@ -30,6 +30,7 @@ dependencies:
 - persistent-template
 - http-types
 - bytestring
+- raw-strings-qq
 
 library:
   source-dirs: src
