@@ -2,12 +2,12 @@
 
 module Run (runApp, app) where 
 
-import           Web.Spock
-import           Web.Spock.Config
+import           Web.Spock (spock, runSpock)
+import           Web.Spock.Config (PoolOrConn(PCPool), defaultSpockCfg, spc_errorHandler) 
 import           Network.Wai (Middleware)
 
 import           Control.Monad.Logger    (LoggingT, runStdoutLoggingT)
-import           Database.Persist.Sqlite
+import           Database.Persist.Sqlite (createSqlitePool, runSqlPool, runMigration)
 
 import           Api (api)
 import           Models

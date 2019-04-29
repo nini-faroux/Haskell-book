@@ -9,10 +9,10 @@
 
 module Models where
 
-import           Web.Spock
+import           Web.Spock (HasSpock, SpockConn, runQuery)
 
 import           Database.Persist.Sqlite hiding (delete, get)
-import           Database.Persist.TH
+import           Database.Persist.TH (share, mkPersist, sqlSettings, mkMigrate, persistLowerCase)
 
 import           Control.Monad.Logger    (LoggingT, runStdoutLoggingT)
 import           Data.Text               (Text)
