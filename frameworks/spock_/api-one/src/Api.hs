@@ -1,8 +1,8 @@
-module Api where
+module Api (api) where
 
 import           Api.User
 import           Api.Root
-import           ApiTypes
+import           ApiTypes (Api)
 
 api :: Api
 api = do

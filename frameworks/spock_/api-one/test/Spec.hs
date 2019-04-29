@@ -1,13 +1,13 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE QuasiQuotes       #-}
 
-import           Web.Spock         (spockAsApp)
+import           Web.Spock           (spockAsApp)
 
 import           Test.Hspec
 import           Test.Hspec.Wai
 import           Test.Hspec.Wai.JSON
 
-import           Run               (app)
+import           Run                 (app)
 
 main :: IO ()
 main = hspec spec

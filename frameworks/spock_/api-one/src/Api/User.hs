@@ -2,9 +2,9 @@
 
 module Api.User where
 
-import           Network.HTTP.Types
 import           Web.Spock
 import           Web.Spock.Config
+import           Network.HTTP.Types.Status
 
 import           Data.Aeson              hiding (json)
 import           Data.Text               (Text, pack)
@@ -14,8 +14,8 @@ import qualified Database.Persist        as P
 import           Database.Persist.Sqlite hiding (delete, get)
 import           Database.Persist.TH
 
-import           ApiTypes
-import           Errors
+import           ApiTypes (ApiAction)
+import           Errors (handler)
 import           Models
 
 getUsers :: SpockCtxM ctx SqlBackend sess st ()
