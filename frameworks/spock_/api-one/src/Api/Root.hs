@@ -1,12 +1,11 @@
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE QuasiQuotes       #-}
 
 module Api.Root where
 
-import           Data.Aeson              hiding (json)
-import           Database.Persist.Sqlite hiding (delete, get)
-import           Web.Spock
+import           Data.Aeson              (Value (String), object, (.=))
+import           Database.Persist.Sqlite (SqlBackend)
+import           Web.Spock               (SpockCtxM, get, json, root)
 
 getRoot :: SpockCtxM ctx SqlBackend sess st ()
-getRoot = get root $ json $ object [ "root" .= String "users"]
+getRoot = get root $ json $ object ["root" .= String "users"]
 

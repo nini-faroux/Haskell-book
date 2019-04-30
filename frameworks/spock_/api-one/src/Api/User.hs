@@ -3,8 +3,7 @@
 module Api.User where
 
 import           Network.HTTP.Types.Status
-import           Web.Spock
-import           Web.Spock.Config
+import           Web.Spock (SpockCtxM, jsonBody, json, get, setStatus, post, var, delete, (<//>))
 
 import           Data.Aeson                hiding (json)
 import           Data.Text                 (Text, pack)
