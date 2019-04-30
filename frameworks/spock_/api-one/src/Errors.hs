@@ -2,12 +2,12 @@
 
 module Errors (handler, handler') where
 
-import           Data.Aeson                hiding (json)
+import           Web.Spock                 (ActionCtxT, json)
+import           Data.Aeson                (Value(String), object, (.=))
 import           Network.HTTP.Types.Status
-import           Web.Spock
 
 import           Control.Monad.IO.Class    (MonadIO)
-import           Data.Text
+import           Data.Text                 (Text)
 import           Data.Text.Encoding        (decodeUtf8)
 
 handler :: MonadIO m => Int -> Text -> ActionCtxT ctx m ()
