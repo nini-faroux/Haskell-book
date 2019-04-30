@@ -1,7 +1,7 @@
 module Api (api) where
 
-import           Api.User
 import           Api.Root
+import           Api.User
 import           ApiTypes (Api)
 
 api :: Api

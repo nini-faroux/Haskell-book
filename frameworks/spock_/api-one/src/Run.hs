@@ -1,27 +1,29 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Run (runApp, app) where 
+module Run (runApp, app) where
 
-import           Web.Spock (spock, runSpock)
-import           Web.Spock.Config (PoolOrConn(PCPool), defaultSpockCfg, spc_errorHandler) 
-import           Network.Wai (Middleware)
+import           Network.Wai             (Middleware)
+import           Web.Spock               (runSpock, spock)
+import           Web.Spock.Config        (PoolOrConn (PCPool), defaultSpockCfg,
+                                          spc_errorHandler)
 
 import           Control.Monad.Logger    (LoggingT, runStdoutLoggingT)
-import           Database.Persist.Sqlite (createSqlitePool, runSqlPool, runMigration)
+import           Database.Persist.Sqlite (createSqlitePool, runMigration,
+                                          runSqlPool)
 
-import           Api (api)
+import           Api                     (api)
+import           Errors                  (handler')
 import           Models
-import           Errors (handler')
 
 runApp :: IO ()
 runApp = runSpock 8080 app
 
-app :: IO Middleware 
+app :: IO Middleware
 app = do
   pool <- runStdoutLoggingT $ createSqlitePool "api.db" 5
-  spockCfg <- defaultSpockCfg () (PCPool pool) () 
+  spockCfg <- defaultSpockCfg () (PCPool pool) ()
   let cfg = spockCfg {spc_errorHandler = handler'}
-  runStdoutLoggingT $ runSqlPool (runMigration migrateAll) pool 
+  runStdoutLoggingT $ runSqlPool (runMigration migrateAll) pool
   spock cfg api
 
-  
+
