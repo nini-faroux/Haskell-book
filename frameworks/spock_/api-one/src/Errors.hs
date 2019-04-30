@@ -2,9 +2,9 @@
 
 module Errors (handler, handler') where
 
-import           Web.Spock                 (ActionCtxT, json)
-import           Data.Aeson                (Value(String), object, (.=))
+import           Data.Aeson                (Value (String), object, (.=))
 import           Network.HTTP.Types.Status
+import           Web.Spock                 (ActionCtxT, json)
 
 import           Control.Monad.IO.Class    (MonadIO)
 import           Data.Text                 (Text)

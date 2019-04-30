@@ -2,14 +2,17 @@
 
 module Api.User where
 
-import           Web.Spock (SpockCtxM, jsonBody, json, get, setStatus, post, var, delete, (<//>))
 import           Network.HTTP.Types.Status
+import           Web.Spock                 (SpockCtxM, delete, get, json,
+                                            jsonBody, post, setStatus, var,
+                                            (<//>))
 
-import           Data.Aeson                (Value(String), object, (.=)) 
+import           Data.Aeson                (Value (String), object, (.=))
 import           Data.Text                 (Text, pack)
 
 import qualified Database.Persist          as P
-import           Database.Persist.Sqlite   (SqlBackend, SelectOpt(Asc), selectList, insert)
+import           Database.Persist.Sqlite   (SelectOpt (Asc), SqlBackend, insert,
+                                            selectList)
 
 import           ApiTypes                  (ApiAction)
 import           Errors                    (handler)
