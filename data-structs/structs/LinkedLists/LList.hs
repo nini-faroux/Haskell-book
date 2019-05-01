@@ -37,7 +37,12 @@ flatMap' :: (a -> List b) -> List a -> List b
 flatMap' _ Nil = Nil
 flatMap' f xs = concat' $ fmap f xs
 
+instance Monad List where 
+  return = pure 
 
+  (>>=) :: List a -> (a -> List b) -> List b
+  xs >>= f = concat' $ fmap f xs
+  
 -- Testing 
 instance Eq a => 
         EqProp (List a) where
@@ -59,4 +64,6 @@ trigger :: List SSI
 trigger = undefined
 
 checkList :: IO () 
-checkList = quickBatch (applicative trigger)
+checkList = do
+  quickBatch (applicative trigger)
+  quickBatch (monad trigger)
