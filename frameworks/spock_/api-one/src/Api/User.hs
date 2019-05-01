@@ -2,10 +2,10 @@
 
 module Api.User where
 
+import           Network.HTTP.Types.Status
 import           Web.Spock                 (SpockCtxM, delete, get, json,
                                             jsonBody, post, setStatus, var,
                                             (<//>))
-import           Network.HTTP.Types.Status
 
 import           Data.Aeson                (Value (String), object, (.=))
 import           Data.Text                 (Text, pack)

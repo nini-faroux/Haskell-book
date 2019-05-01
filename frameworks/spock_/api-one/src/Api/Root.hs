@@ -7,5 +7,5 @@ import           Database.Persist.Sqlite (SqlBackend)
 import           Web.Spock               (SpockCtxM, get, json, root)
 
 getRoot :: SpockCtxM ctx SqlBackend sess st ()
-getRoot = get root $ json $ object ["root" .= String "users"]
+getRoot = get root $ json $ object ["route" .= String "users"]
 
