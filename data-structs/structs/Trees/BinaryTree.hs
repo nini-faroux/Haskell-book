@@ -1,9 +1,13 @@
 module Trees.BinaryTree where
 
+import Test.QuickCheck
+import Test.QuickCheck.Classes
+import Test.QuickCheck.Checkers
+
 data BinTree a =
     Leaf 
   | Node (BinTree a) a (BinTree a)
-  deriving Show 
+  deriving (Eq, Show) 
 
 instance Functor BinTree where 
   fmap _ Leaf = Leaf 
@@ -46,14 +50,29 @@ insert x (Node l y r)
   | x >= y    = Node l y (insert x r) 
   | otherwise = Node (insert x l) y r
 
-testTree :: BinTree Integer 
-testTree = Node (Node Leaf 1 Leaf) 2 (Node Leaf 3 Leaf)
+-- testing
+instance Eq a =>
+        EqProp (BinTree a) where
+  (=-=) = eq
 
-appTree :: BinTree (Integer -> Integer) 
-appTree = Node (Node Leaf (*2) Leaf) (+10) (Node Leaf (*4) Leaf)
+instance Arbitrary a =>
+        Arbitrary (BinTree a) where
+  arbitrary = treeGen
 
-testBinTree :: IO () 
-testBinTree = do 
-    print testTree
-    print $ (*2) <$> testTree
-    print $ appTree <*> testTree
+treeGen :: Arbitrary a => Gen (BinTree a)
+treeGen = do
+  a <- arbitrary 
+  b <- arbitrary 
+  c <- arbitrary 
+  oneof [return Leaf, return $ Node a b c]
+
+type SSI = (String, String, Int)
+
+trigger :: BinTree SSI
+trigger = undefined
+
+checkTree :: IO () 
+checkTree = quickBatch (functor trigger)
+
+treeMain :: IO () 
+treeMain = sample (treeGen :: Gen (BinTree Int))
