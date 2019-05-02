@@ -15,9 +15,10 @@ instance Functor BinTree where
 
 instance Applicative BinTree where 
   pure x = Node Leaf x Leaf 
-  Leaf <*> _ = Leaf 
+
+  Leaf <*> _ = Leaf
   _ <*> Leaf = Leaf 
-  (Node lf f rf) <*> (Node l x r) = Node (lf <*> l) (f x) (rf <*> r)
+  fs@(Node lf f rf) <*> (Node l x r) = Node (fs <*> l) (f x) (fs <*> r)
 
 instance Monad BinTree where 
   return = pure 
@@ -72,7 +73,9 @@ trigger :: BinTree SSI
 trigger = undefined
 
 checkTree :: IO () 
-checkTree = quickBatch (functor trigger)
+checkTree = do 
+  quickBatch (applicative trigger)
+  --quickBatch (monad trigger)
 
 treeMain :: IO () 
 treeMain = sample (treeGen :: Gen (BinTree Int))
