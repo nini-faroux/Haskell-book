@@ -1,3 +1,5 @@
+{-# LANGUAGE InstanceSigs #-}
+
 module Trees.BinaryTree where
 
 import Test.QuickCheck
@@ -13,6 +15,7 @@ instance Functor BinTree where
   fmap _ Leaf = Leaf 
   fmap f (Node l x r) = Node (f <$> l) (f x) (f <$> r)
 
+-- fails the interchange test 
 instance Applicative BinTree where 
   pure x = Node Leaf x Leaf 
 
@@ -20,8 +23,13 @@ instance Applicative BinTree where
   _ <*> Leaf = Leaf 
   fs@(Node lf f rf) <*> (Node l x r) = Node (fs <*> l) (f x) (fs <*> r)
 
+-- fails Left and Right Id tests 
+-- this Binary Tree type only makes sense for Functor? 
+-- not applicative and Monad
 instance Monad BinTree where 
   return = pure 
+
+  (>>=) :: BinTree a -> (a -> BinTree b) -> BinTree b
   Leaf >>= _ = Leaf 
   (Node l x r) >>= f = do
           l' <- l
@@ -74,8 +82,9 @@ trigger = undefined
 
 checkTree :: IO () 
 checkTree = do 
+  quickBatch (functor trigger)
   quickBatch (applicative trigger)
-  --quickBatch (monad trigger)
+  quickBatch (monad trigger)
 
 treeMain :: IO () 
 treeMain = sample (treeGen :: Gen (BinTree Int))
