@@ -12,9 +12,20 @@ data LTree a =
   deriving (Eq, Show)
 
 instance Functor LTree where
-  fmap :: (a -> b) -> LTree a -> LTree b
   fmap f (Leaf x) = Leaf (f x)
   fmap f (LNode l r) = LNode (f <$> l) (f <$> r)
+
+instance Applicative LTree where 
+  pure = Leaf
+  
+  (<*>) = undefined
+
+instance Monad LTree where 
+  return = pure 
+
+  (>>=) :: LTree a -> (a -> LTree b) -> LTree b
+  (Leaf x) >>= f = f x 
+  (LNode l r) >>= f = LNode (l >>= \x -> f x) (r >>= \x -> f x)
 
 -- testing 
 instance Eq a =>
@@ -38,4 +49,6 @@ trigger :: LTree SSI
 trigger = undefined
 
 checkLTree :: IO () 
-checkLTree = quickBatch (functor trigger)
+checkLTree = do
+  quickBatch (functor trigger)
+  quickBatch (monad trigger)
