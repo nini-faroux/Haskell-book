@@ -11,6 +11,17 @@ data BinTree a =
   | Node (BinTree a) a (BinTree a)
   deriving (Eq, Show) 
 
+instance Semigroup a => 
+        Semigroup (BinTree a) where 
+  Leaf <> ts = ts 
+  ts <> Leaf = ts 
+  (Node l x r) <> (Node l' x' r') = Node (l <> l') (x <> x') (r <> r')
+
+instance Monoid a => 
+        Monoid (BinTree a) where 
+  mempty = Leaf 
+  mappend = (<>)
+
 instance Functor BinTree where 
   fmap _ Leaf = Leaf 
   fmap f (Node l x r) = Node (f <$> l) (f x) (f <$> r)
@@ -36,6 +47,9 @@ instance Monad BinTree where
           r' <- r 
           x' <- f x
           Node (f l') x' (f r')
+
+conc :: BinTree a -> BinTree a -> BinTree a 
+conc l r = undefined
 
 foldTree :: (b -> a -> b) -> b -> BinTree a -> b
 foldTree _ z Leaf = z
@@ -76,12 +90,17 @@ treeGen = do
   oneof [return Leaf, return $ Node a b c]
 
 type SSI = (String, String, Int)
+type SSS = (String, String, String)
 
 trigger :: BinTree SSI
 trigger = undefined
 
+trigger' :: BinTree SSS
+trigger' = undefined
+
 checkTree :: IO () 
 checkTree = do 
+  quickBatch (monoid trigger')
   quickBatch (functor trigger)
   quickBatch (applicative trigger)
   quickBatch (monad trigger)
