@@ -11,6 +11,17 @@ data List a =
   | Cons a (List a) 
   deriving (Eq, Show)
 
+instance Semigroup a =>
+        Semigroup (List a) where
+  Nil <> ys = ys 
+  xs <> Nil = xs 
+  (Cons x xs) <> (Cons y ys) = Cons (x <> y) (xs <> ys)
+
+instance Monoid a =>
+        Monoid (List a) where 
+  mempty = Nil
+  mappend = (<>)
+
 instance Functor List where 
   fmap _ Nil = Nil 
   fmap f (Cons x xs) = Cons (f x) (fmap f xs)
@@ -59,11 +70,16 @@ listGen = do
     frequency [(1, return Nil), (3, return $ Cons a b)]
 
 type SSI = (String, String, Int)
+type SSS = (String, String, String)
 
 trigger :: List SSI
 trigger = undefined
 
+trigger' :: List SSS
+trigger' = undefined
+
 checkList :: IO () 
 checkList = do
+  quickBatch (monoid trigger') 
   quickBatch (applicative trigger)
   quickBatch (monad trigger)
