@@ -24,6 +24,7 @@ dependencies:
 - QuickCheck
 - checkers
 - containers
+- comonad
 
 library:
   source-dirs: structs
