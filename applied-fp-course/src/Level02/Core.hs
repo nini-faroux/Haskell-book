@@ -7,84 +7,74 @@ import           Network.Wai              (Application, Request, Response,
 import           Network.Wai.Handler.Warp (run)
 
 import           Network.HTTP.Types       (Status, hContentType, status200,
-                                           status400, status404)
+                                           status201, status400, status404)
 
 import qualified Data.ByteString.Lazy     as LBS
 
 import           Data.Either              (either)
 
 import           Data.Text                (Text)
-import           Data.Text.Encoding       (decodeUtf8)
+import           Data.Text.Encoding       (decodeUtf8, encodeUtf8)
 
-import           Level02.Types            (ContentType, Error, RqType,
-                                           mkCommentText, mkTopic,
-                                           renderContentType)
+import           Level02.Types            (ContentType(..), Error(..), 
+                                           RqType(..), mkCommentText, mkTopic, 
+                                           renderContentType, getTopic)
 
--- |-------------------------------------------|
--- |- Don't start here, go to Level02.Types!  -|
--- |-------------------------------------------|
-
--- | Some helper functions to make our lives a little more DRY.
 mkResponse
   :: Status
   -> ContentType
   -> LBS.ByteString
   -> Response
-mkResponse =
-  error "mkResponse not implemented"
-
+mkResponse status content = responseLBS status [("Content-Type", renderContentType content)] 
+  
 resp200
   :: ContentType
   -> LBS.ByteString
   -> Response
-resp200 =
-  error "resp200 not implemented"
+resp200 = mkResponse status200 
+
+resp201 
+    :: ContentType 
+    -> LBS.ByteString 
+    -> Response 
+resp201 = mkResponse status201
 
 resp404
   :: ContentType
   -> LBS.ByteString
   -> Response
-resp404 =
-  error "resp404 not implemented"
+resp404 = mkResponse status404 
 
 resp400
   :: ContentType
   -> LBS.ByteString
   -> Response
-resp400 =
-  error "resp400 not implemented"
+resp400 = mkResponse status400
 
 -- |----------------------------------------------------------------------------------
--- These next few functions will take raw request information and construct         --
--- one of our types.                                                                --
---                                                                                  --
--- By breaking out these smaller functions, we're able to isolate our               --
--- validation requirements into smaller components that are simpler to maintain     --
--- and verify. It also allows for greater reuse and it also means that              --
--- validation is not duplicated across the application, maybe incorrectly.          --
+-- Take raw request information and construct         
+-- one of our types.                                                                
 --------------------------------------------------------------------------------------
 
-mkAddRequest
-  :: Text
-  -> LBS.ByteString
-  -> Either Error RqType
-mkAddRequest =
-  error "mkAddRequest not implemented"
-  where
-    -- This is a helper function to assist us in going from a Lazy ByteString, to a Strict Text
-    lazyByteStringToStrictText =
-      decodeUtf8 . LBS.toStrict
+mkAddRequest :: Text -> LBS.ByteString -> Either Error RqType 
+mkAddRequest topic comment = 
+  mkTopic topic >>= \t -> 
+    mkCommentText (l2bs comment) >>= \c -> 
+            return (AddRq t c)
+  where 
+    l2bs = decodeUtf8 . LBS.toStrict
 
 mkViewRequest
   :: Text
   -> Either Error RqType
-mkViewRequest =
-  error "mkViewRequest not implemented"
+mkViewRequest topic =
+  case mkTopic topic of 
+      Left e -> Left e 
+      Right top -> Right (ViewRq top)
 
 mkListRequest
   :: Either Error RqType
-mkListRequest =
-  error "mkListRequest not implemented"
+mkListRequest = Right ListRq
 
 -- |----------------------------------
 -- end of RqType creation functions --
@@ -93,42 +83,39 @@ mkListRequest =
 mkErrorResponse
   :: Error
   -> Response
-mkErrorResponse =
-  error "mkErrorResponse not implemented"
+mkErrorResponse err 
+  | err == TopicNotFound = resp404 PlainText "404"
+  | otherwise            = resp400 PlainText "400" 
 
--- | Use our ``RqType`` helpers to write a function that will take the input
--- ``Request`` from the Wai library and turn it into something our application
--- cares about.
 mkRequest
   :: Request
   -> IO ( Either Error RqType )
-mkRequest =
-  -- Remembering your pattern-matching skills will let you implement the entire
-  -- specification in this function.
-  error "mkRequest not implemented"
+mkRequest request = do
+  let method = requestMethod request
+  let path = pathInfo request 
+  body <- strictRequestBody request 
+  case last path of      
+      "add"  -> return $ mkAddRequest (last $ init path) body
+      "view" -> return $ mkViewRequest (last $ init path) 
+      _      -> return mkListRequest 
 
--- | If we find that we need more information to handle a request, or we have a
--- new type of request that we'd like to handle then we update the ``RqType``
--- structure and the compiler will let us know which parts of our application
--- are affected.
---
--- Reduction of concerns such that each section of the application only deals
--- with a small piece is one of the benefits of developing in this way.
---
--- For now, return a made-up value for each of the responses as we don't have
--- any persistent storage. Plain text responses that contain "X not implemented
--- yet" should be sufficient.
 handleRequest
   :: RqType
   -> Either Error Response
-handleRequest =
-  error "handleRequest not implemented"
+handleRequest (AddRq _ _) = Right (resp201 PlainText "Succesful post")
+handleRequest (ViewRq topic) = 
+        Right (resp200 PlainText "Succesful View") 
+handleRequest ListRq = Right (resp200 PlainText "Successful View All")
 
--- | Reimplement this function using the new functions and ``RqType`` constructors as a guide.
-app
-  :: Application
-app =
-  error "app not reimplemented"
+app :: Application
+app request cb = do
+  reqType <- mkRequest request
+  case reqType of 
+      (Left e)    -> cb $ mkErrorResponse e 
+      (Right req) -> 
+          case handleRequest req of 
+              (Left e)     -> cb $ mkErrorResponse e 
+              (Right resp) -> cb resp 
 
 runApp :: IO ()
 runApp = run 3000 app
