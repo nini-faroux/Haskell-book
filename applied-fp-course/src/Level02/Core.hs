@@ -85,7 +85,7 @@ mkErrorResponse
   -> Response
 mkErrorResponse err 
   | err == TopicNotFound = resp404 PlainText "404"
-  | otherwise            = resp400 PlainText "400" 
+  | otherwise            = resp400 PlainText "Empty Comment Text" 
 
 mkRequest
   :: Request
