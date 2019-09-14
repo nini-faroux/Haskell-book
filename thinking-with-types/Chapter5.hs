@@ -4,10 +4,12 @@
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE ConstraintKinds #-}
+{-# LANGUAGE UndecidableInstances #-}
 
 module HeterolistTWTs where 
 
-import Data.Kind (Type) 
+import Data.Kind (Type, Constraint) 
 import Data.Monoid ((<>))
 
 data HList (ts :: [Type]) where 
@@ -22,6 +24,27 @@ hLength (_ :# ts) = 1 + hLength ts
 
 hHead :: HList (t ': ts) -> t 
 hHead (t :# _) = t 
+
+type family All (c :: Type -> Constraint) 
+                (ts :: [Type]) :: Constraint where 
+  All c '[] = () 
+  All c (t ': ts) = (c t, All c ts) 
+
+instance All Eq ts => Eq (HList ts) where 
+  HNil == HNil = True 
+  (a :# as) == (b :# bs) = a == b && as == bs
+
+instance (All Ord ts, All Eq ts) 
+             => Ord (HList ts) where 
+  compare HNil HNil = EQ 
+  compare (x :# xs) (y :# ys) = compare x y <> compare xs ys
+
+instance All Show ts => Show (HList ts) where 
+  show HNil = "[]"
+  show (x :# xs) = show x ++ " " ++ show xs
+
+{-- 
+Instances without All type family: 
 
 instance Eq (HList '[]) where 
   HNil == HNil = True 
@@ -46,3 +69,4 @@ instance Show (HList '[]) where
 instance (Show t, Show (HList ts)) 
           => Show (HList (t ': ts)) where 
   show (x :# xs) = show x ++ " " ++ show xs
+--}
