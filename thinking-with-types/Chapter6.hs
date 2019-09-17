@@ -1,3 +1,6 @@
+{-# LANGUAGE InstanceSigs #-}
+{-# LANGUAGE RankNTypes #-}
+
 {- 
   Exercise 6.3-i
   What is the rank of:  
@@ -18,4 +21,20 @@
   Rank-3, 3 arrows after deepest forall
 -}
 
+{-
+  Exercise 6.4-i 
+  Provide a Functor, Applicative and Monad 
+  instances for Cont 
+-}
 
+newtype Cont a = 
+  Cont { 
+    unCont :: forall r. (a -> r) -> r 
+  }
+
+runCont :: (forall r. (a -> r) -> r) -> a 
+runCont f = f id
+
+instance Functor Cont where
+  fmap :: (a -> b) -> Cont a -> Cont b 
+  fmap f conta = Cont $ \g -> g (f $ unCont conta id)
