@@ -32,9 +32,20 @@ newtype Cont a =
     unCont :: forall r. (a -> r) -> r 
   }
 
-runCont :: (forall r. (a -> r) -> r) -> a 
-runCont f = f id
-
 instance Functor Cont where
   fmap :: (a -> b) -> Cont a -> Cont b 
   fmap f conta = Cont $ \g -> g (f $ unCont conta id)
+
+instance Applicative Cont where 
+  pure :: a -> Cont a 
+  pure x = Cont $ \f -> f x 
+
+  (<*>) :: Cont (a -> b) -> Cont a -> Cont b
+  contf <*> conta = Cont $ \g -> g $ (unCont contf id) (unCont conta id)
+
+instance Monad Cont where 
+  return = pure 
+
+  (>>=) ::Cont a -> (a -> Cont b) -> Cont b
+  conta >>= f = f $ unCont conta id
+
