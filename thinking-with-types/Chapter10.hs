@@ -56,6 +56,14 @@ data Foldr :: (a -> b -> Exp b) -> b -> [a] -> Exp b
 type instance Eval (Foldr _ z '[]) = z 
 type instance Eval (Foldr f z (x ': xs)) = Eval (f x (Eval (Foldr f z xs)))
 
+{- 
+  Exercise 10.4-i 
+  Write a promoted functor instance for tuples
+-}
+
+data Map :: (a -> Exp b) -> f a -> Exp (f b) 
+type instance Eval (Map f '(x, y)) = '(x, Eval (f y))
+
 {--------------------}
 {- Chapter Examples -}
 
@@ -87,3 +95,50 @@ data MapList :: (a -> Exp b) -> [a] -> Exp [b]
 
 type instance Eval (MapList f '[]) = '[]
 type instance Eval (MapList f (x ': xs)) = Eval (f x) ': Eval (MapList f xs)
+
+{- FCF Monad -}
+
+data Pure :: a -> Exp a 
+type instance Eval (Pure x) = x 
+
+data (=<<) :: (a -> Exp b) -> Exp a -> Exp b
+type instance Eval (k =<< e) = Eval (k (Eval e))
+infixr 0 =<<
+
+-- composition 
+data (<=<) :: (b -> Exp c) -> (a -> Exp b) -> a -> Exp c 
+type instance Eval ((f <=< g) x) = Eval (f (Eval (g x)))
+infixr 1 <=<
+
+-- ty eq 
+data TyEq :: a -> b -> Exp Bool 
+
+type instance Eval (TyEq a b) = TyEqImpl a b 
+
+type family TyEqImpl (a :: k) (b :: k) :: Bool where 
+  TyEqImpl a a = 'True 
+  TyEqImpl a b = 'False 
+
+-- collapse a list of Constraints 
+data Collapse :: [Constraint] -> Exp Constraint 
+type instance Eval (Collapse '[])       = (() :: Constraint) 
+type instance Eval (Collapse (a ': as)) = (a, Eval (Collapse as))
+
+type All (c :: k -> Constraint) (ts :: [k]) = 
+  Collapse =<< MapList (Pure1 c) ts 
+
+data Pure1 :: (a -> b) -> a -> Exp b 
+type instance Eval (Pure1 f x) = f x 
+
+{- Ad-Hoc Polymorphism -} 
+
+data Map' :: (a -> Exp b) -> f a -> Exp (f b) 
+
+type instance Eval (Map' _ '[]) = '[] 
+type instance Eval (Map' f (x ': xs)) = Eval (f x) ': Eval (Map' f xs)
+
+type instance Eval (Map' _ 'Nothing) = 'Nothing 
+type instance Eval (Map' f ('Just x)) = 'Just (Eval (f x))
+
+type instance Eval (Map' f ('Left x)) = 'Left x 
+type instance Eval (Map' f ('Right y)) = 'Right (Eval (f y))
