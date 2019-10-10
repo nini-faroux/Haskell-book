@@ -26,6 +26,8 @@ dependencies:
 - servant-server
 - aeson
 - time
+- wai
+- warp
 
 library:
   source-dirs: src
