@@ -27,6 +27,12 @@ makeLenses ''Person
 hollywood :: Text 
 hollywood = "Hollywood Blvd"
 
+wilshire :: Text 
+wilshire = "Wilshire Blvd" 
+
+someStreet :: Text 
+someStreet = "Some Street"
+
 alice :: Person 
 alice = Person 
   { _name = "Alice" 
@@ -34,29 +40,39 @@ alice = Person
   , _age = 30
   } 
 
-wilshire :: Text 
-wilshire = "Wilshire Blvd" 
-
+-- set Alice's street to Wilshire
 aliceWilshire :: Person 
-aliceWilshire = undefined 
+aliceWilshire = setStreet wilshire alice 
+
+aliceSomeStreet :: Person 
+aliceSomeStreet = setStreet' someStreet alice 
+
+setStreet :: Text -> Person -> Person 
+setStreet st = over (address . street) (const st) 
+
+setStreet' :: Text -> Person -> Person 
+setStreet' = set (address . street) 
 
 getStreet :: Person -> Text 
-getStreet = undefined
+getStreet person = person^.address.street
 
 -- increase age by 1 
 birthday :: Person -> Person 
-birthday = undefined 
+birthday person = set age (getAge person + 1) person 
 
 getAge :: Person -> Int 
-getAge = undefined 
+getAge = view age 
+
+getAge' :: Person -> Int 
+getAge' person = person^.age 
 
 mainEx1 :: IO () 
 mainEx1 = hspec $ do
   it "lives on Wilshire" $ 
     _street (_address aliceWilshire) `shouldBe` wilshire 
+  it "lives on some street" $ 
+    _street (_address aliceSomeStreet) `shouldBe` someStreet 
   it "getStreet works" $ 
     getStreet alice `shouldBe` hollywood 
   it "birthday" $ 
     getAge (birthday alice) `shouldBe` _age alice + 1
-           
-
