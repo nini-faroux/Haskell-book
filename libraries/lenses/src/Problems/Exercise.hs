@@ -162,3 +162,11 @@ mainEx1 = hspec $ do
     getStreetMF alice `shouldBe` hollywood 
   it "manual no helper birthday" $ 
     getAgeManual (birthdayMF alice) `shouldBe` _age alice + 1
+    
+  -- exercise 4, tuple test  
+  it "fun with tuples" $
+    let tupleLens = _2 . _1 
+        tuple :: ((Int, Double), (Bool, Char, String))
+        tuple = ((1, 2), (True, 'x', "Hello World"))
+     in over tupleLens not tuple `shouldBe`
+            ((1, 2), (False, 'x', "Hello World"))
