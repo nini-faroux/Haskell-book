@@ -20,23 +20,7 @@ data Person =
   , _age :: !Int 
   } 
 
-makeLenses ''Person 
-makeLenses ''Address 
-
-streetL :: Lens' Address Text 
-streetL = lens _street (\addr newSt -> addr { _street = newSt })
-
-cityL :: Lens' Address Text 
-cityL = lens _city (\addr newCity -> addr { _city = newCity })
-
-ageL :: Lens' Person Int 
-ageL = lens _age (\pers newAge -> pers { _age = newAge })
-
-addressL :: Lens' Person Address 
-addressL = lens _address (\pers newAddr -> pers { _address = newAddr })
-
-personStreetL :: Lens' Person Text 
-personStreetL = addressL . streetL 
+{- test data -}
 
 hollywood :: Text 
 hollywood = "Hollywood Blvd"
@@ -54,15 +38,67 @@ alice = Person
   , _age = 30
   } 
 
--- set Alice's street to Wilshire
-aliceWilshire :: Person 
-aliceWilshire = setStreet wilshire alice 
+-- templatehaskell 
+makeLenses ''Person 
+makeLenses ''Address 
 
-aliceWilshireManual :: Person 
-aliceWilshireManual = setStreetManual wilshire alice 
+{- make the lenses without the lens helper function -}
 
-aliceSomeStreet :: Person 
-aliceSomeStreet = setStreet' someStreet alice 
+-- streetLF :: Functor f => (Text -> f Text) -> Address -> f Address 
+streetLF :: Lens' Address Text 
+streetLF f address = (\street -> address { _street = street}) <$> f (_street address)
+
+addressLF :: Lens' Person Address 
+addressLF f person = (\address -> person { _address = address }) <$> f (_address person)
+
+ageLF :: Lens' Person Int 
+ageLF f person = (\age -> person { _age = age }) <$> f (_age person)
+
+{- make the lenses using the lens helper function -}
+
+streetL :: Lens' Address Text 
+streetL = lens _street (\addr newSt -> addr { _street = newSt })
+
+cityL :: Lens' Address Text 
+cityL = lens _city (\addr newCity -> addr { _city = newCity })
+
+ageL :: Lens' Person Int 
+ageL = lens _age (\pers newAge -> pers { _age = newAge })
+
+addressL :: Lens' Person Address 
+addressL = lens _address (\pers newAddr -> pers { _address = newAddr })
+
+personStreetL :: Lens' Person Text 
+personStreetL = addressL . streetL 
+
+personStreetLF :: Lens' Person Text 
+personStreetLF = addressLF . streetLF
+
+{- use the lenses -}
+
+-- use template generated 
+getAge :: Person -> Int 
+getAge = view age 
+
+getAge' :: Person -> Int 
+getAge' person = person^.age 
+
+-- use manual lens func created 
+getAgeManual :: Person -> Int 
+getAgeManual person = person^.ageL 
+
+-- use manual functor created 
+getAgeMF :: Person -> Int 
+getAgeMF person = person^.ageLF
+
+getStreet :: Person -> Text 
+getStreet person = person^.address.street
+
+getStreetManual :: Person -> Text 
+getStreetManual person = person^.addressL.streetL 
+
+getStreetMF :: Person -> Text 
+getStreetMF person = person^.addressLF.streetLF 
 
 setStreet :: Text -> Person -> Person 
 setStreet st = over (address . street) (const st) 
@@ -73,27 +109,31 @@ setStreet' = set (address . street)
 setStreetManual :: Text -> Person -> Person 
 setStreetManual = set personStreetL 
 
-getStreet :: Person -> Text 
-getStreet person = person^.address.street
+setStreetMF :: Text -> Person -> Person 
+setStreetMF = set personStreetLF 
 
-getStreetManual :: Person -> Text 
-getStreetManual person = person^.addressL.streetL 
-
--- increase age by 1 
 birthday :: Person -> Person 
 birthday person = set age (getAge person + 1) person 
 
 birthdayManual :: Person -> Person 
 birthdayManual person = set ageL (getAgeManual person + 1) person
 
-getAge :: Person -> Int 
-getAge = view age 
+birthdayMF :: Person -> Person 
+birthdayMF person = set ageLF (getAgeMF person + 1) person
 
-getAge' :: Person -> Int 
-getAge' person = person^.age 
+{- use on the test data -}
 
-getAgeManual :: Person -> Int 
-getAgeManual person = person^.ageL 
+aliceWilshire :: Person 
+aliceWilshire = setStreet wilshire alice 
+
+aliceWilshireManual :: Person 
+aliceWilshireManual = setStreetManual wilshire alice 
+
+aliceWilshireMF :: Person 
+aliceWilshireMF = setStreetMF wilshire alice 
+
+aliceSomeStreet :: Person 
+aliceSomeStreet = setStreet' someStreet alice 
 
 mainEx1 :: IO () 
 mainEx1 = hspec $ do
@@ -106,6 +146,7 @@ mainEx1 = hspec $ do
     getStreet alice `shouldBe` hollywood 
   it "birthday" $ 
     getAge (birthday alice) `shouldBe` _age alice + 1
+  
   -- exercise 2 tests, manual lenses 
   it "manual lives on wilshire" $ 
     _street (_address aliceWilshireManual) `shouldBe` wilshire 
@@ -113,3 +154,11 @@ mainEx1 = hspec $ do
     getStreetManual alice `shouldBe` hollywood 
   it "manual birthday" $ 
     getAgeManual (birthdayManual alice) `shouldBe` _age alice + 1
+
+  -- exercise 3 tests, without lens helper 
+  it "manual no helper lives on wilshire" $ 
+    _street (_address aliceWilshireMF) `shouldBe` wilshire 
+  it "manual no helper getStreet works" $ 
+    getStreetMF alice `shouldBe` hollywood 
+  it "manual no helper birthday" $ 
+    getAgeManual (birthdayMF alice) `shouldBe` _age alice + 1
