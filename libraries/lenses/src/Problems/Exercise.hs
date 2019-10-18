@@ -113,13 +113,13 @@ setStreetMF :: Text -> Person -> Person
 setStreetMF = set personStreetLF 
 
 birthday :: Person -> Person 
-birthday person = set age (getAge person + 1) person 
+birthday = over age (+1) 
 
 birthdayManual :: Person -> Person 
-birthdayManual person = set ageL (getAgeManual person + 1) person
+birthdayManual = over ageL (+1) 
 
 birthdayMF :: Person -> Person 
-birthdayMF person = set ageLF (getAgeMF person + 1) person
+birthdayMF = over ageLF (+1) 
 
 {- use on the test data -}
 
