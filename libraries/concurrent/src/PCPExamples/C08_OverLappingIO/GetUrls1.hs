@@ -1,4 +1,4 @@
-module PCPExamples.C08_OverLappingIO.GetUrls1 where
+module PCPExamples.C08_OverLappingIO.GetUrls1 (mainGetUrl1) where
 
 import           PCPExamples.Helpers.Timeit
 import           PCPExamples.Helpers.GetUrl
