@@ -29,11 +29,6 @@ wait a = do
     Left e  -> throwIO e 
     Right a -> return a 
 
-timeDownload :: String -> IO () 
-timeDownload url = do 
-  (page, time) <- timeit $ getURL url 
-  print (url, B.length page, time)
-
 mainGetUrl2 :: IO () 
 mainGetUrl2 = do 
   as <- mapM (async . timeDownload) sites 

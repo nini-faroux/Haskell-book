@@ -20,11 +20,6 @@ async action = do
 wait :: Async a -> IO a 
 wait (Async var) = readMVar var 
 
-timeDownload :: String -> IO () 
-timeDownload url = do 
-  (page, time) <- timeit $ getURL url 
-  print (url, B.length page, time)
-
 mainGetUrl1 :: IO () 
 mainGetUrl1 = do 
   as <- mapM (async . timeDownload) sites 
