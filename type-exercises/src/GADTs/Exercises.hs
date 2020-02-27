@@ -2,6 +2,7 @@
 {-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE FlexibleContexts #-}
 
 module GADTs.Exercises where
 
@@ -258,7 +259,7 @@ data HTree a where
 -- try breaking the implementation - does it type-check? If not, why not?
 
 deleteLeft :: HTree (left, centre, right) -> HTree ((), centre, right) 
-deleteLeft (Branch tl c tr) = Branch Empty c tr
+deleteLeft (Branch l c r) = Branch Empty c r
 
 -- | c. Implement 'Eq' for 'HTree's. Note that you might have to write more
 -- than one to cover all possible HTrees. You might also need an extension or
@@ -269,8 +270,9 @@ deleteLeft (Branch tl c tr) = Branch Empty c tr
 instance Eq (HTree ()) where 
   Empty == Empty = True 
 
-instance (Eq left, Eq right, Eq centre) => Eq (HTree (left, centre, right)) where 
-  (Branch (Branch ll1 lc1 lr1) c1 (Branch rl1 rc1 rr1)) == (Branch (Branch ll2 lc2 lr2) c2 (Branch rl2 rc2 rr2)) = undefined
+instance (Eq left, Eq right, Eq centre, Eq (HTree left), Eq (HTree centre), Eq (HTree right)) 
+  => Eq (HTree (left, centre, right)) where 
+    Branch l1 c1 r1 == Branch l2 c2 r2 = l1 == l2 && c1 == c2 && r1 == r2
     
 {- EIGHT -}
 
@@ -299,10 +301,6 @@ getSeconds = error "Implement me, too!"
 foldValues :: (Monoid a, Monoid b) => AlternatingList a b -> (a, b)
 foldValues = error "Implement me, three!"
 
-
-
-
-
 {- NINE -}
 
 -- | Here's the "classic" example of a GADT, in which we build a simple
@@ -319,7 +317,11 @@ data Expr a where
 -- | a. Implement the following function and marvel at the typechecker:
 
 eval :: Expr a -> a
-eval = undefined
+eval (IntValue i) = i 
+eval (BoolValue b) = b 
+eval (Equals e1 e2) = eval e1 == eval e2 
+eval (Add e1 e2) = eval e1 + eval e2 
+eval (If cond e1 e2) = if eval cond then eval e1 else eval e2
 
 -- | b. Here's an "untyped" expression language. Implement a parser from this
 -- into our well-typed language. Note that (until we cover higher-rank
@@ -333,15 +335,15 @@ data DirtyExpr
   | DirtyBoolValue Bool
 
 parse :: DirtyExpr -> Maybe (Expr Int)
-parse = error "Implement me"
+parse (DirtyIntValue i) = Just $ IntValue i
+parse (DirtyBoolValue b) = if b then Just $ IntValue 1 else Just $ IntValue 0 -- or Nothing
+parse (DirtyEquals (DirtyIntValue e1) (DirtyIntValue e2)) = if e1 == e2 then Just $ IntValue 1 else Just $ IntValue 0 -- or Nothing
+parse (DirtyAdd (DirtyIntValue e1) (DirtyIntValue e2)) = Just $ Add (IntValue e1) (IntValue e2)
+parse (DirtyIf (DirtyBoolValue b) (DirtyIntValue i1) (DirtyIntValue i2)) = Just $ If (BoolValue b) (IntValue i1) (IntValue i2)
 
 -- | c. Can we add functions to our 'Expr' language? If not, why not? What
 -- other constructs would we need to add? Could we still avoid 'Maybe' in the
 -- 'eval' function?
-
-
-
-
 
 {- TEN -}
 
