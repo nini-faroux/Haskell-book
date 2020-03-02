@@ -278,28 +278,38 @@ instance (Eq left, Eq right, Eq centre, Eq (HTree left), Eq (HTree centre), Eq (
 
 -- | a. Implement the following GADT such that values of this type are lists of
 -- values alternating between the two types. For example:
+fal :: AlternatingList Bool Int
+fal = ACons True (ACons 1 (ACons False (ACons 2 ANil)))
 --
--- @
---   f :: AlternatingList Bool Int
---   f = ACons True (ACons 1 (ACons False (ACons 2 ANil)))
--- @
 
 data AlternatingList a b where
-  -- ...
+  ANil :: AlternatingList a b
+  ACons :: a -> AlternatingList b a -> AlternatingList a b
 
 -- | b. Implement the following functions.
 
 getFirsts :: AlternatingList a b -> [a]
-getFirsts = error "Implement me!"
+getFirsts ANil = [] 
+getFirsts (ACons a (ACons _ xs)) = a : getFirsts xs
 
 getSeconds :: AlternatingList a b -> [b]
-getSeconds = error "Implement me, too!"
+getSeconds ANil = [] 
+getSeconds (ACons _ (ACons b xs)) = b : getSeconds xs
 
 -- | c. One more for luck: write this one using the above two functions, and
 -- then write it such that it only does a single pass over the list.
 
 foldValues :: (Monoid a, Monoid b) => AlternatingList a b -> (a, b)
-foldValues = error "Implement me, three!"
+foldValues xs = (ma, mb) 
+  where 
+    ma = mconcat $ getFirsts xs 
+    mb = mconcat $ getSeconds xs
+
+foldValues' :: (Monoid a, Monoid b) => AlternatingList a b -> (a, b) 
+foldValues' xs = go xs mempty mempty 
+  where 
+    go ANil ma mb = (ma, mb) 
+    go (ACons a (ACons b xs)) ma mb = go xs (ma <> a) (mb <> b)
 
 {- NINE -}
 
@@ -365,4 +375,3 @@ data TypeAlignedList a b where
 
 composeTALs :: TypeAlignedList b c -> TypeAlignedList a b -> TypeAlignedList a c
 composeTALs = error "Implement me, and then celebrate!"
-
