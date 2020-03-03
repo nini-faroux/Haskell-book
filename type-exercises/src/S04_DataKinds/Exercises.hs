@@ -139,28 +139,51 @@ tailHL (HCons _ xs) = xs
 
 -- | Here's a boring data type:
 
-data BlogAction
+{- data BlogAction
   = AddBlog
   | DeleteBlog
   | AddComment
-  | DeleteComment
+  | DeleteComment -}
 
 -- | a. Two of these actions, 'DeleteBlog' and 'DeleteComment', should be
 -- admin-only. Extend the 'BlogAction' type (perhaps with a GADT...) to
 -- express, at the type-level, whether the value is an admin-only operation.
 -- Remember that, by switching on @DataKinds@, we have access to a promoted
 -- version of 'Bool'!
+        {-
+data BlogAction (admin :: Bool) where 
+  DeleteBlog    :: BlogAction 'True 
+  DeleteComment :: BlogAction 'True
+  AddBlog       :: BlogAction 'False 
+  AddComment    :: BlogAction 'False -}
 
 -- | b. Write a 'BlogAction' list type that requires all its members to be
 -- the same "access level": "admin" or "non-admin".
-
--- data BlogActionList (isSafe :: ???) where
---   ...
+{-
+data BlogActionList (isSafe :: Bool) where
+  NilNonAdmin  :: BlogActionList 'False 
+  NilAdmin     :: BlogActionList 'True 
+  ConsNonAdmin :: BlogAction 'False -> BlogActionList 'False -> BlogActionList 'False 
+  ConsAdmin    :: BlogAction 'True -> BlogActionList 'True -> BlogActionList 'True  -}
 
 -- | c. Let's imagine that our requirements change, and 'DeleteComment' is now
 -- available to a third role: moderators. Could we use 'DataKinds' to introduce
 -- the three roles at the type-level, and modify our type to keep track of
 -- this?
+data Role = User | Admin | Moderator
+
+data BlogAction (roles :: [Role]) where 
+  DeleteBlog    :: BlogAction '[ 'Admin] 
+  DeleteComment :: BlogAction ['Admin, 'Moderator]
+  AddBlog       :: BlogAction ['User, 'Admin, 'Moderator] 
+  AddComment    :: BlogAction ['User, 'Admin, 'Moderator] 
+
+data BlogActionList (isSafe :: Bool) where 
+  NilNonAdmin   :: BlogActionList 'False 
+  NilAdmin      :: BlogActionList 'True 
+  ConsAdminOnly :: BlogAction '[ 'Admin] -> BlogActionList 'True -> BlogActionList 'True 
+  ConsAdminMod  :: BlogAction ['Admin, 'Moderator] -> BlogActionList 'True -> BlogActionList 'True 
+  ConsAnyone    :: BlogAction ['User, 'Admin, 'Moderator] -> BlogActionList 'False -> BlogActionList 'False
 
 {- SEVEN -}
 
@@ -179,17 +202,34 @@ data SBool (value :: Bool) where
 -- | a. Write a singleton type for natural numbers:
 
 data SNat (value :: Nat) where
-  -- ...
+  SZero :: SNat 'Z 
+  SSucc :: SNat n -> SNat ('S n)
 
 -- | b. Write a function that extracts a vector's length at the type level:
 
-length :: Vector n a -> SNat n
-length = error "Implement me!"
+lengthVector :: Vector n a -> SNat n
+lengthVector VNil = SZero
+lengthVector (VCons _ xs) = SSucc $ lengthVector xs
+
+emptyVector :: Vector 'Z Int 
+emptyVector = VNil
+
+lenZero :: SNat 'Z
+lenZero = lengthVector emptyVector
+
+threeElementVector :: Vector ('S ('S ('S 'Z))) Int 
+threeElementVector = VCons 0 (VCons 1 (VCons 2 VNil))
+
+lenThree :: SNat ('S ('S ('S 'Z)))
+lenThree = lengthVector threeElementVector
 
 -- | c. Is 'Proxy' a singleton type?
 
 data Proxy a = Proxy
 
+-- No, because there are endless types to one data constructor
+-- Proxy String :: Type, Proxy [Int] :: Type, ...
+-- I think...
 
 {- EIGHT -}
 
