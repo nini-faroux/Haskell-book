@@ -1,11 +1,9 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Parser where 
+module Parser (parseAllRecords) where 
 
-import Control.Applicative ((<|>))
 import qualified Data.Attoparsec.ByteString as P 
 import qualified Data.Attoparsec.ByteString.Char8 as AC
-import qualified Data.Attoparsec.Combinator as PC
 import qualified Data.ByteString as BS
 
 parseAllRecords :: P.Parser [[BS.ByteString]]

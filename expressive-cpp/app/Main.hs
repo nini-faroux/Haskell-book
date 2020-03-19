@@ -5,12 +5,14 @@ module Main where
 import Control.Lens (ix, (&), (.~))
 import qualified Data.ByteString as BS 
 import qualified Data.Attoparsec.ByteString as P
-import Parser 
+import Parser (parseAllRecords)
 
 main :: IO ()
 main = do 
   file <- BS.readFile "./data/expressive_cpp17_before.csv"
+  putStrLn "Enter the Column name to change"
   columnName <- BS.getLine
+  putStrLn "Enter the new value"
   newValue <- BS.getLine
   if BS.null file 
     then print "Input file missing"
