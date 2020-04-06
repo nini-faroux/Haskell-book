@@ -13,7 +13,7 @@ groupAnagrams xs = foldl add (replicate (Map.size indices) []) xs
     idx x = fromJust $ Map.lookup (sort x) indices 
 
 wordsToIndex :: [String] -> Map.Map String Int 
-wordsToIndex xs = snd $ foldl (\(idx, m) x -> if isNothing (Map.lookup x m) then (idx+1, Map.insert x idx m) else (idx, m)) (0, Map.empty) xs 
+wordsToIndex = snd . foldl (\(idx, m) x -> if isNothing (Map.lookup x m) then (idx+1, Map.insert x idx m) else (idx, m)) (0, Map.empty) 
 
 groupAnagramsMain :: IO () 
 groupAnagramsMain = do 
