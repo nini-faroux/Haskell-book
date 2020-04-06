@@ -1,10 +1,11 @@
 module HappyNumber where 
 
-import qualified Data.Map as Map 
+import Data.List (unfoldr)
 import Data.Maybe (isJust)
+import qualified Data.Map as Map 
 
-happyNum :: Int -> Bool 
-happyNum n = go n Map.empty
+happyNumber :: Int -> Bool 
+happyNumber n = go n Map.empty
   where 
     go n acc 
       | sos == 1 = True 
@@ -16,8 +17,10 @@ happyNum n = go n Map.empty
 sumOfSquares :: Int -> Int 
 sumOfSquares = sum . map (^2) . splitNum 
 
-splitNum :: Int -> [Int] 
-splitNum n = go n [] 
-  where 
-    go 0 acc = acc 
-    go n acc = go (n `div` 10) (n `rem` 10 : acc) 
+splitNum :: Int -> [Int]
+splitNum = reverse . unfoldr (\x -> if x == 0 then Nothing else Just (x `rem` 10, x `div` 10)) 
+
+happyNumberMain :: IO () 
+happyNumberMain = do 
+  print $ happyNumber 19
+  print $ happyNumber 20
