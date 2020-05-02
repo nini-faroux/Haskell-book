@@ -1,4 +1,4 @@
-module FirstLast where 
+module Medium.FirstLast where 
 
 -- in: [5,7,7,8,8,10], target = 8, out: [3,4]
 -- in: [5,7,7,8,8,10], target = 6, out: [-1,-1]

@@ -1,4 +1,4 @@
-module MaxSubArray where 
+module Easy.MaxSubArray where 
 
 import Prelude hiding (head, drop)
 import Data.List.NonEmpty (head, drop, NonEmpty((:|)))

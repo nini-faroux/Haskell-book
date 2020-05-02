@@ -1,4 +1,4 @@
-module GroupAnagrams where 
+module Medium.GroupAnagrams where 
 
 import Data.List (sort) 
 import Data.Maybe (isNothing, fromJust)

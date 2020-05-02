@@ -1,4 +1,4 @@
-module BackspaceCompare where 
+module Easy.BackspaceCompare where 
 
 import Data.Char (isSpace)
 

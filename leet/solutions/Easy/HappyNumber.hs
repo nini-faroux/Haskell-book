@@ -1,4 +1,4 @@
-module HappyNumber where 
+module Easy.HappyNumber where 
 
 import Data.List (unfoldr)
 import Data.Maybe (isJust)

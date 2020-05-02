@@ -1,4 +1,4 @@
-module CountingElements where 
+module Easy.CountingElements where 
 
 import Data.List (sort, group)
 

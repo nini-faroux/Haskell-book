@@ -1,4 +1,4 @@
-module BuySellStockII where 
+module Easy.BuySellStockII where 
 
 maxProfit :: [Int] -> Int
 maxProfit xs = snd $ foldl (\(prev, acc) x -> (x, acc + max 0 (x - prev))) (head xs, 0) xs
