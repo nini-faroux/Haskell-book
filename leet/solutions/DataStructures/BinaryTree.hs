@@ -20,11 +20,8 @@ instance Functor BinaryTree where
   fmap _ Leaf = Leaf 
   fmap f (Node x l r) = Node (f x) (f <$> l) (f <$> r)
 
-instance Applicative BinaryTree where 
-  pure x = Node x Leaf Leaf
-  Leaf <*> _ = Leaf 
-  _ <*> Leaf = Leaf 
-  (Node f lf rf) <*> (Node x l r) = Node (f x) (lf <*> l) (rf <*> r)
+buildTree :: Ord a => [a] -> BinaryTree a 
+buildTree = foldl (flip btInsert) Leaf 
 
 btInsert :: Ord a => a -> BinaryTree a -> BinaryTree a 
 btInsert x Leaf = Node x Leaf Leaf
