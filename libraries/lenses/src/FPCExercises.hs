@@ -1,7 +1,7 @@
 {-# LANGUAGE TemplateHaskell   #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Problems.Exercise where
+module FPCExercises () where
 
 import Lens.Micro.Platform 
 import Data.Text (Text) 
