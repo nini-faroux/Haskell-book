@@ -34,3 +34,27 @@ user1 = User
       ]
     }
   }
+
+viewName :: User -> Text 
+viewName u = u ^. name
+
+viewNumLogins :: User -> Int 
+viewNumLogins u = u ^. metaData.numLogins
+
+setNumLogins :: User -> Int -> User 
+setNumLogins u n = u & metaData.numLogins .~ n
+
+addIP :: User -> Text -> User 
+addIP u ip = u & metaData.associatedIPs %~ (ip :)
+
+incrementNumLogins :: User -> User 
+incrementNumLogins = metaData.numLogins %~ (+ 1) 
+
+setUserInfo :: User -> UserInfo -> User 
+setUserInfo u info = u & metaData .~ info
+
+setUserId :: User -> Int -> User 
+setUserId u n = u & userId .~ n
+
+setIPs :: User -> [Text] -> User 
+setIPs u ips = u & metaData.associatedIPs .~ ips
