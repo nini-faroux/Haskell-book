@@ -1,7 +1,16 @@
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module WYExercises where 
+module WYLenses 
+  (
+    user1
+  , user2
+  , User(..)
+  , UserInfo(..)
+  , (.~)
+  , (%~)
+  ) 
+  where 
 
 import Control.Lens hiding ((.~), (%~), (^.))
 import qualified Data.Text as T
