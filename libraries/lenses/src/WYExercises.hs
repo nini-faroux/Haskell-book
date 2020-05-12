@@ -3,7 +3,7 @@
 
 module WYExercises where 
 
-import Control.Lens
+import Control.Lens hiding ((.~), (%~), (^.))
 import qualified Data.Text as T
 
 data User = 
@@ -45,8 +45,23 @@ user2 = User
     }
   }
 
+infixr 4 .~ 
+(.~) :: ((a -> Identity b) -> s -> Identity t) -> b -> s -> t 
+(.~) f b s = runIdentity $ f (const $ pure b) s 
+
+infixr 4 %~ 
+(%~) :: ((a -> Identity b) -> s -> Identity t) -> (a -> b) -> s -> t 
+(%~) f g s = runIdentity $ f (pure . g) s
+
+infixl 8 ^. 
+(^.) :: s -> ((a -> Const a b) -> s -> Const a t) -> a 
+(^.) s f = getConst $ f Const s
+
 viewName :: User -> T.Text 
 viewName u = u ^. name
+
+setName :: User -> T.Text -> User 
+setName u nm = u & name .~ nm
 
 viewNumLogins :: User -> Int 
 viewNumLogins u = u ^. metaData.numLogins
